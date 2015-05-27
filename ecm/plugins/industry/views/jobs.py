@@ -47,7 +47,8 @@ COLUMNS = [
     ['Quantity/Runs', 'runs'],
     ['Item', 'item_id'],
 ]
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def jobs_list(request):
     activities = Job.ACTIVITIES.items()
@@ -61,7 +62,8 @@ def jobs_list(request):
     }
     return render_to_response('ecm/industry/jobs_list.html', data, Ctx(request))
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def jobs_list_data(request):
     try:
@@ -123,8 +125,9 @@ def jobs_list_data(request):
 
     return datatable_ajax_data(data, params.sEcho, total, filtered)
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 @check_user_access()
 def change_state(request, job_id, action):
     try:
@@ -155,5 +158,3 @@ def change_state(request, job_id, action):
         return HttpResponse()
     else:
         return HttpResponseBadRequest('Transition not allowed "%s"' % action)
-
-

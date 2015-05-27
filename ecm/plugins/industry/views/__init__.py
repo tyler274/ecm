@@ -33,13 +33,14 @@ from ecm.plugins.industry.models import CatalogEntry, Supply
 
 logger = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def home(request):
     return render_to_response('ecm/industry/industry_home.html', {}, Ctx(request))
 
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def create_missing_catalog_entries():
     start = time.time()
     manufacturable_types = Type.objects.filter(blueprint__isnull=False,
@@ -61,8 +62,9 @@ def create_missing_catalog_entries():
         logger.info('added %d missing catalog entries (took %.2f sec.)', len(missing_ids), duration)
 create_missing_catalog_entries()
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def create_missing_supplies():
     start = time.time()
     eve_supplies = BlueprintReq.objects.filter(required_type__blueprint__isnull=True,
@@ -80,8 +82,9 @@ def create_missing_supplies():
         logger.info('added %d missing supplies (took %.2f sec.)', len(missing_ids), duration)
 create_missing_supplies()
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def create_missing_item_groups():
     start = time.time()
     all_types = Type.objects.filter(blueprint__isnull=False,
@@ -151,4 +154,3 @@ def create_missing_item_groups():
     logger.info('Initialized item groups (took %.2f sec.)', duration)
     
 create_missing_item_groups()
-

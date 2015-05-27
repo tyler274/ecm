@@ -39,8 +39,9 @@ COLUMNS = [
 
 BLUEPRINTS_CATEGORYID = 9
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 @check_user_access()
 def blueprints(request):
     error = None
@@ -78,7 +79,7 @@ def blueprints(request):
     return render_to_response('ecm/industry/catalog/import_blueprints.html', data, Ctx(request))
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 def blueprints_data(request):
     # pull request params
@@ -119,7 +120,8 @@ def blueprints_data(request):
     return datatable_ajax_data(data=prints, echo=params.sEcho,
                                total=total_count, filtered=filtered_count)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def get_missing_blueprints(display_mode='originals'):
     query = Asset.objects.filter(is_bpc__isnull=False)
 
