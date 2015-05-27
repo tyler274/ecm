@@ -34,12 +34,12 @@ from ecm.plugins.industry.models import CatalogEntry, Supply
 logger = logging.getLogger(__name__)
 
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 def home(request):
     return render_to_response('ecm/industry/industry_home.html', {}, Ctx(request))
 
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 @transaction.atomic()
 def create_missing_catalog_entries():
     start = time.time()
@@ -63,7 +63,7 @@ def create_missing_catalog_entries():
 create_missing_catalog_entries()
 
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 @transaction.atomic()
 def create_missing_supplies():
     start = time.time()
@@ -83,7 +83,7 @@ def create_missing_supplies():
 create_missing_supplies()
 
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 @transaction.atomic()
 def create_missing_item_groups():
     start = time.time()
@@ -154,3 +154,4 @@ def create_missing_item_groups():
     logger.info('Initialized item groups (took %.2f sec.)', duration)
     
 create_missing_item_groups()
+

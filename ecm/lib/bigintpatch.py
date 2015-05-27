@@ -1,24 +1,44 @@
-from django.db.backends import util, BaseDatabaseOperations
+from django.db.backends import util
+from django.db.backends.base.operations import BaseDatabaseOperations
 from django.db.backends.sqlite3.base import DatabaseOperations
 from django.db.models import fields
 from django.db.models.fields.related import ForeignKey
-from south.modelsinspector import add_introspection_rules
+# from south.modelsinspector import add_introspection_rules
+
+# data_types was moved between 1.5 and 1.8
 try:
-    from django.db.backends.postgresql_psycopg2.creation import DatabaseCreation as PostgresDBCreation
+    from django.db.backends.postgresql_psycopg2.base import DatabaseWrapper as PostgresDBWrapper
+    # from django.db.backends.postgresql_psycopg2.creation import DatabaseCreation as PostgresDBCreation
 except:
     # fix for django 1.4
     pass
-from django.db.backends.sqlite3.creation import DatabaseCreation as SQLiteDBCreation
-from django.db.backends.oracle.creation import DatabaseCreation as OracleDBCreation
-from django.db.backends.mysql.creation import DatabaseCreation as MySQLDBCreation
+
+try:
+    from django.db.backends.sqlite3.base import DatabaseWrapper as SQLiteDBWrapper
+    # from django.db.backends.sqlite3.creation import DatabaseCreation as SQLiteDBCreation
+except:
+    pass
+
+# The below cause errors now if their requisite databases and libraries are not installed, replace with a try/except
+try:
+    from django.db.backends.oracle.base import DatabaseWrapper as OracleDBWrapper
+    # from django.db.backends.oracle.creation import DatabaseCreation as OracleDBCreation
+except:
+    pass
+
+try:
+    from django.db.backends.mysql.base import DatabaseWrapper as MySQLDBWrapper
+    # from django.db.backends.mysql.creation import DatabaseCreation as MySQLDBCreation
+except:
+    pass
+
 from django.utils.datastructures import DictWrapper
-from django.db.backends.creation import BaseDatabaseCreation
-
-
+from django.db.backends.base.creation import BaseDatabaseCreation
 
 
 __version__ = "1.0"
 __author__ = "Florian Leitner"
+
 
 class BigAutoField(fields.AutoField):
     
@@ -27,21 +47,21 @@ class BigAutoField(fields.AutoField):
     def get_internal_type(self):
         return "BigAutoField"
     
-add_introspection_rules([], [r'^ecm\.lib\.bigintpatch\.BigAutoField'])
+# add_introspection_rules([], [r'^ecm\.lib\.bigintpatch\.BigAutoField'])
+# might not be needed anymore
 
 try:
-    PostgresDBCreation.data_types['BigAutoField'] = 'bigserial'
+    PostgresDBWrapper.data_types['BigAutoField'] = 'bigserial'
 except:
     # fix for django 1.4
     pass
-OracleDBCreation.data_types['BigAutoField'] = 'NUMBER(19)'
-MySQLDBCreation.data_types['BigAutoField'] = 'bigint AUTO_INCREMENT'
-SQLiteDBCreation.data_types['BigAutoField'] = 'integer'
-SQLiteDBCreation.data_types_suffix = {
+# OracleDBWrapper.data_types['BigAutoField'] = 'NUMBER(19)'
+# MySQLDBWrapper.data_types['BigAutoField'] = 'bigint AUTO_INCREMENT'
+SQLiteDBWrapper.data_types['BigAutoField'] = 'integer'
+SQLiteDBWrapper.data_types_suffix = {
     'AutoField': 'AUTOINCREMENT', 
     'BigAutoField': 'AUTOINCREMENT', 
 }
-
 
 
 def db_type_suffix(self, connection): 
@@ -67,8 +87,8 @@ def db_type_foreignkey(self, connection):
         return fields.BigIntegerField().db_type(connection=connection) 
     if (isinstance(rel_field, fields.AutoField) or
             (not connection.features.related_fields_match_type and
-            isinstance(rel_field, (fields.PositiveIntegerField,
-                                   fields.PositiveSmallIntegerField)))):
+                 isinstance(rel_field, (fields.PositiveIntegerField,
+                                        fields.PositiveSmallIntegerField)))):
         return fields.IntegerField().db_type(connection=connection)
     return rel_field.db_type(connection=connection)
 
@@ -96,7 +116,6 @@ def convert_values_sqlite(self, value, field):
     return value
 
 DatabaseOperations.convert_values = convert_values_sqlite
-
 
 
 def convert_values_base(self, value, field):

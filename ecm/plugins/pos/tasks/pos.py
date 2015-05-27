@@ -33,7 +33,7 @@ from ecm.apps.corp.models import Corporation
 logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def update():
     """
     Retrieve all POS informations

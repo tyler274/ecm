@@ -319,8 +319,6 @@ class BlueprintReq(models.Model):
         return self.id
 
 
-
-
 #------------------------------------------------------------------------------
 class Type(models.Model):
 

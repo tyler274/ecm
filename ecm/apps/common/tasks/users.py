@@ -26,8 +26,9 @@ from ecm.apps.common.models import RegistrationProfile
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def cleanup_unregistered_users():
     LOG.info("Deleting activation keys...")
     count = 0

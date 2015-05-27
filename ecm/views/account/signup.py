@@ -35,8 +35,9 @@ from ecm.apps.common.api import required_access_mask
 
 logger = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def create_account(request):
     if request.method == 'POST':
         form = AccountCreationForm(request.POST)
@@ -85,7 +86,8 @@ def create_account(request):
                               { 'form': form, 'accessMask': accessMask },
                               context_instance=Ctx(request))
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def activate_account(request, activation_key):
     try:
         user = RegistrationProfile.objects.activate_user(activation_key)
@@ -102,8 +104,7 @@ def activate_account(request, activation_key):
                                   context_instance=Ctx(request))
 
 
-
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def send_activation_email(request, user_profile):
     ctx_dict = {'host_name': settings.EXTERNAL_HOST_NAME,
                 'use_https': settings.USE_HTTPS,

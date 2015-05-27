@@ -21,9 +21,10 @@ __author__ = "Ajurna"
 from ecm.apps.alerts.models import ObserverSpec
 from ecm.apps.scheduler.validators import extract_function
 
-def observe( **kwargs ):
-    os = ObserverSpec.objects.filter(handler_function = kwargs['handler_function'])
+
+def observe(**kwargs):
+    os = ObserverSpec.objects.filter(handler_function=kwargs['handler_function'])
     for specs in os:
         for obv in specs.observers.all():
             task = extract_function(obv.observer_spec.callback_function)
-            task(obv, args = kwargs['arguments'])
+            task(obv, args=kwargs['arguments'])

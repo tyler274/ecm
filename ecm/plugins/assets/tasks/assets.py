@@ -111,7 +111,7 @@ def update():
         write_diff_results(diffs, currentTime)
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def write_results(new_items, old_items, assets_to_locate, currentTime):
     if len(old_items) > 0:
         Asset.objects.all().delete()
@@ -123,7 +123,7 @@ def write_results(new_items, old_items, assets_to_locate, currentTime):
     UpdateDate.mark_updated(model=Asset, date=currentTime)
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def write_diff_results(diffs, currentTime):
     for assetDiff in diffs:
         assetDiff.save()

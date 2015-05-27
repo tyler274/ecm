@@ -22,12 +22,12 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from ecm.lib import bigintpatch
+# from ecm.lib import bigintpatch
 from ecm.apps.corp.models import Wallet
 from ecm.apps.eve.models import Type, CelestialObject
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class EntryType(models.Model):
     """
     Wallet journal entry transaction type
@@ -43,28 +43,28 @@ class EntryType(models.Model):
         return unicode(self.refTypeName)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class JournalEntry(models.Model):
     """
     Represents a wallet journal entry that can be fetched from the API
     at the following url http://api.eve-online.com/corp/WalletJournal.xml.aspx
     """
-    id         = bigintpatch.BigAutoField(primary_key=True) #@ReservedAssignment
-    refID      = models.BigIntegerField() # the couple (refID, wallet_id) should be unique
+    id         = models.BigIntegerField(primary_key=True) # @ReservedAssignment
+    refID      = models.BigIntegerField()  # the couple (refID, wallet_id) should be unique
     wallet     = models.ForeignKey(Wallet, db_index=True)
     date       = models.DateTimeField()
-    type       = models.ForeignKey(EntryType, db_index=True) #@ReservedAssignment
-    ownerName1 = models.CharField(max_length=128) # first party of the transaction
+    type       = models.ForeignKey(EntryType, db_index=True)  # @ReservedAssignment
+    ownerName1 = models.CharField(max_length=128)  # first party of the transaction
     ownerID1   = models.BigIntegerField()
-    ownerName2 = models.CharField(max_length=128) # second party of the transaction
+    ownerName2 = models.CharField(max_length=128)  # second party of the transaction
     ownerID2   = models.BigIntegerField()
     argName1   = models.CharField(max_length=128)
     argID1     = models.BigIntegerField()
     amount     = models.FloatField() # amount of the transaction
     balance    = models.FloatField() # balance of the account after the transaction
-    reason     = models.CharField(max_length=512) # comment
+    reason     = models.CharField(max_length=512)  # comment
 
-    DATE_FIELD = 'date' # used for garbage collection
+    DATE_FIELD = 'date'  # used for garbage collection
 
     class Meta:
         get_latest_by = 'refID'
@@ -74,7 +74,8 @@ class JournalEntry(models.Model):
     def __unicode__(self):
         return unicode(self.id)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class TransactionEntry(models.Model):
     
     class Meta:

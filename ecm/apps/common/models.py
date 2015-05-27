@@ -21,12 +21,13 @@ __author__ = 'diabeteman'
 import random
 import datetime
 import re
+import hashlib
 
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User, Group
 from django.db import models, transaction
 from django.conf import settings
-from django.utils.hashcompat import sha_constructor
+# from django.utils.hashcompat import sha_constructor # hascompat deprecated, replaced with hashlib
 from django.core.validators import RegexValidator
 from django.utils import timezone
 
@@ -63,6 +64,7 @@ class Setting(models.Model):
     def get(name):
         return Setting.objects.get(name=name).getValue()
 
+
 #------------------------------------------------------------------------------
 class UserAPIKey(models.Model):
     """
@@ -94,6 +96,7 @@ class UserAPIKey(models.Model):
         except:
             return u"%d owns %d" % (self.user_id, self.keyID)
 
+
 #------------------------------------------------------------------------------
 class ExternalApplication(models.Model):
     """
@@ -114,6 +117,7 @@ class ExternalApplication(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
 
 #------------------------------------------------------------------------------
 class UserBinding(models.Model):
@@ -150,6 +154,7 @@ class UserBinding(models.Model):
     def __unicode__(self):
         return unicode(self.external_name)
 
+
 #------------------------------------------------------------------------------
 class GroupBinding(models.Model):
     """
@@ -171,6 +176,7 @@ class GroupBinding(models.Model):
 
     def __unicode__(self):
         return unicode(self.external_name)
+
 
 #------------------------------------------------------------------------------
 class UpdateDate(models.Model):
@@ -310,15 +316,16 @@ class RegistrationManager(models.Manager):
         profile = self.create_profile(new_user)
 
         return new_user, profile
-    create_inactive_user = transaction.commit_on_success(create_inactive_user)
+    create_inactive_user = transaction.atomic(create_inactive_user)
 
     def create_profile(self, user):
-        salt = sha_constructor(str(random.random())).hexdigest()[:5]
+        salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
         username = user.username
         if isinstance(username, unicode):
             username = username.encode('utf-8')
-        activation_key = sha_constructor(salt+username).hexdigest()
+        activation_key = hashlib.sha1(salt+username).hexdigest()
         return self.create(user=user, activation_key=activation_key)
+
 
 #------------------------------------------------------------------------------
 class RegistrationProfile(models.Model):
@@ -349,13 +356,18 @@ class RegistrationProfile(models.Model):
                (self.user.date_joined + expiration_date <= timezone.now())
     activation_key_expired.boolean = True
 
+
 #------------------------------------------------------------------------------
 class Motd(models.Model):
     #softdeps
     #  PyTextile       : Textile 
     #  Python-markdown : Markdown 
     #  docutils        : reST (reStructured Text)
-    from django.contrib.markup.templatetags import markup
+
+    # from django.contrib.markup.templatetags import markup
+    #  markwhat is a drop in replacement for the removed markup library
+
+    from django_markwhat.templatetags import markup
 
     MARKUPS = {0: 'Plain Text'}
     MARKUP_FUNCTIONS = {0: unicode}

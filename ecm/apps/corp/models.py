@@ -32,7 +32,8 @@ from ecm.utils.http import HttpClient
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Hangar(models.Model):
     
     DEFAULT_NAMES = {
@@ -67,7 +68,8 @@ class Hangar(models.Model):
     def __unicode__(self):
         return unicode(self.hangarID)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class CorpHangar(models.Model):
 
     class Meta:
@@ -83,7 +85,8 @@ class CorpHangar(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Wallet(models.Model):
     
     DEFAULT_NAMES = {
@@ -117,7 +120,8 @@ class Wallet(models.Model):
     def __unicode__(self):
         return unicode(self.walletID)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class CorpWallet(models.Model):
     
     class Meta:
@@ -133,7 +137,8 @@ class CorpWallet(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class CorpManager(models.Manager):
     
     def mine(self):
@@ -142,7 +147,8 @@ class CorpManager(models.Manager):
     def others(self):
         return self.filter(is_my_corp=False)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Alliance(models.Model):
     allianceID = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -150,7 +156,8 @@ class Alliance(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Corporation(models.Model):
     
     objects = CorpManager()
@@ -177,7 +184,7 @@ class Corporation(models.Model):
     
     last_update     = models.DateTimeField(auto_now=True)
     
-    #override
+    # override
     def clean(self):
         if self.ecm_url and not (self.key_fingerprint and self.public_key):
             self.contact_corp(self.ecm_url)
@@ -280,7 +287,8 @@ class Corporation(models.Model):
     def __hash__(self):
         return self.corporationID
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Standing(models.Model):
     
     class Meta:
@@ -312,7 +320,7 @@ class Standing(models.Model):
         return unicode(self.contactName)
 
     
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class CorpGroup(models.Model):
     
     name = models.CharField(primary_key=True, max_length=100)
@@ -321,8 +329,9 @@ class CorpGroup(models.Model):
 
     def __unicode__(self):
         return self.name
-    
-#------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
 class SharedData(models.Model):
     
     url = models.CharField(primary_key=True, max_length=255, editable=False)

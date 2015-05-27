@@ -35,7 +35,7 @@ from ecm.apps.hr.models import Member, MemberDiff
 LOG = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def update():
     """
     Retrieve all corp members, with all basic information about them.

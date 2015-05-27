@@ -33,8 +33,9 @@ from ecm.apps.hr.models import RoleMembership, TitleMembership, RoleMemberDiff, 
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def update():
     """
     Retrieve all corp members' titles and roles.

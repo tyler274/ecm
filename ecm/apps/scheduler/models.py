@@ -33,7 +33,8 @@ from ecm.apps.scheduler.validators import (FunctionValidator, extract_function, 
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class ScheduledTask(models.Model):
 
     FREQUENCY_UNIT_CHOICES = (
@@ -136,7 +137,8 @@ class ScheduledTask(models.Model):
                 self.is_scheduled = False
                 self.save()
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class GarbageCollector(models.Model):
 
     AGE_UNIT_CHOICES = (
@@ -149,6 +151,8 @@ class GarbageCollector(models.Model):
 
     model = models.CharField(max_length=255, primary_key=True,
                              validators=[ModelValidator()])
+    model = models.CharField(max_length=255, primary_key=True,
+                             validators=[])
     min_entries_threshold = models.BigIntegerField(default=10000)
     max_age_threshold = models.BigIntegerField()
     age_units = models.BigIntegerField(default=3600 * 24 * 7 * 30, choices=AGE_UNIT_CHOICES)

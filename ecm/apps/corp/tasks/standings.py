@@ -28,8 +28,9 @@ from ecm.apps.common import api
 import logging
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def update():
     """
     Fetch a /corp/ContactList.xml.aspx api response, parse it and store it to

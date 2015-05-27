@@ -36,7 +36,7 @@ from ecm.plugins.industry.models import Supply, SupplySource, Order, CatalogEntr
 logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def update_supply_prices():
     supplyPrices = Supply.objects.filter(auto_update=True)
     for supply_source in SupplySource.objects.all():

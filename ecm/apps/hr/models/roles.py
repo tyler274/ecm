@@ -20,7 +20,7 @@ __author__ = "diabeteman"
 
 from django.db import models
 
-from ecm.lib import bigintpatch
+# from ecm.lib import bigintpatch
 from ecm.apps.corp.models import Hangar, Wallet, Corporation
 from ecm.apps.hr.models.member import Member
 
@@ -196,7 +196,7 @@ class RoleMemberDiff(models.Model):
         app_label = 'hr'
         ordering = ['date']
 
-    id = bigintpatch.BigAutoField(primary_key=True) #@ReservedAssignment
+    id = models.BigIntegerField(primary_key=True) #@ReservedAssignment
     member = models.ForeignKey(Member)
     role = models.ForeignKey(Role)
     # true if role is new for member, false if role was removed

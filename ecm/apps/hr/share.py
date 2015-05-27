@@ -28,8 +28,9 @@ from ecm.apps.hr.models.member import Member, Skill
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def process_members(corp, data):
     corp.members.all().delete()
     
@@ -38,8 +39,9 @@ def process_members(corp, data):
     
     LOG.info('Updated members from %r' % corp)
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def process_players(corp, data):
     User.objects.filter(is_active=False, email=str(corp.corporationID)).delete()
     
@@ -57,8 +59,9 @@ def process_players(corp, data):
 
     LOG.info('Updated member owners from %r' % corp)
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def process_skills(corp, data):
     
     Skill.objects.filter(character__corp=corp).delete()

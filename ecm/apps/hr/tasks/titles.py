@@ -34,8 +34,9 @@ from ecm.apps.common import api
 import logging
 logger = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def update():
     """
     Retrieve all corp titles, their names and their role composition.

@@ -49,7 +49,7 @@ def update():
             logger.info('plugin/mail: API invalid for user %s' % key.user.username)
 
 #-----------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def get_notifications(api_conn, charid):
     headers = api_conn.char.Notifications(characterID=charid)
     mem = Member.objects.get(characterID=charid)
@@ -74,7 +74,7 @@ def get_notifications(api_conn, charid):
             note.save()
 
 #-----------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def get_mail(api_conn, char):
     headers = api_conn.char.MailMessages(characterID=char.characterID)
     headerlist = []
@@ -130,8 +130,9 @@ def get_mail(api_conn, char):
                 msg.save()
         logger.info('Char: %s added %s mails'%(char.name,len(headerlist)))
 
-#-----------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# -----------------------------------------------------------------------------
+@transaction.atomic()
 def get_mailing_lists(api_conn, charid):
     lists = api_conn.char.mailinglists(characterID=charid)
     for li in lists.mailingLists:

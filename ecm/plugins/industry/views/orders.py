@@ -24,7 +24,7 @@ from django.db import transaction
 from django.http import Http404, HttpResponseBadRequest
 from django.template.context import RequestContext as Ctx
 from django.shortcuts import get_object_or_404, render_to_response, redirect
-from django.utils.text import truncate_words
+from django.utils.text import Truncator
 
 from ecm.utils import _json as json
 from ecm.utils.format import print_date, print_float, print_integer, verbose_name
@@ -35,7 +35,8 @@ from ecm.plugins.industry.models import Order, Job
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 COLUMNS = [
     ['#', 'id'],
     ['State', 'state'],
@@ -62,7 +63,8 @@ def orders(request):
     }
     return render_to_response('ecm/industry/orders_list.html', data, Ctx(request))
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def orders_data(request):
     try:
@@ -107,13 +109,14 @@ def orders_data(request):
             order.originator_permalink(),
             order.client or '(none)',
             delivDate,
-            truncate_words(', '.join(items), 6),
+            Truncator(', '.join(items)).words(6),
             print_float(order.quote) + ' iSK',
         ])
 
     return datatable_ajax_data(data=orders, echo=params.sEcho)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def details(request, order_id):
     """
@@ -127,7 +130,7 @@ def details(request, order_id):
     return _order_details(request, order)
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 @check_user_access()
 def change_state(request, order_id, transition):
     """

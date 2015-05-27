@@ -39,7 +39,8 @@ from ecm.admin.util import run_python_cmd, log, pipe_to_django_shell
 from ecm.admin.cmd.load import print_load_message
 from ecm.admin.cmd import collect_static_files
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def sub_command():
     # UPGRADE
     description = 'Synchronize an instance\'s database and files.'
@@ -60,33 +61,34 @@ def sub_command():
 
     return upgrade_cmd
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def migrate_ecm_db(instance_dir, upgrade_from_149=False):
     instance_dir = path.abspath(instance_dir)
 
     log("Migrating database...")
-    run_python_cmd('manage.py syncdb --noinput', instance_dir)
+    run_python_cmd('manage.py makemigrations --noinput', instance_dir)
 
-    if upgrade_from_149:
-        log('Migrating from ECM 1.4.9...')
-        # we are upgrading from ECM 1.X.Y, we must perform the init migration
-        # on the 'hr' app (rename tables from 'roles_xxxxx' to 'hr_xxxxx')
-        pipe_to_django_shell('from south.models import MigrationHistory; '\
-                             'MigrationHistory.objects.all().delete()' , instance_dir)
+    # if upgrade_from_149:
+    #     log('Migrating from ECM 1.4.9...')
+    #     # we are upgrading from ECM 1.X.Y, we must perform the init migration
+    #     # on the 'hr' app (rename tables from 'roles_xxxxx' to 'hr_xxxxx')
+    #     pipe_to_django_shell('from south.models import MigrationHistory; '\
+    #                          'MigrationHistory.objects.all().delete()' , instance_dir)
+    #
+    #     run_python_cmd('manage.py migrate hr 0001 --noinput', instance_dir)
+    #     # we MUST "fake" the first migration for 1.4.9 apps
+    #     # otherwise the migrate command will fail because DB tables already exist...
+    #     for app in ('common', 'scheduler', 'corp', 'assets', 'accounting'):
+    #         run_python_cmd('manage.py migrate %s 0001 --fake --noinput' % app, instance_dir)
 
-        run_python_cmd('manage.py migrate hr 0001 --noinput', instance_dir)
-        # we MUST "fake" the first migration for 1.4.9 apps
-        # otherwise the migrate command will fail because DB tables already exist...
-        for app in ('common', 'scheduler', 'corp', 'assets', 'accounting'):
-            run_python_cmd('manage.py migrate %s 0001 --fake --noinput' % app, instance_dir)
+    run_python_cmd('manage.py migrate', instance_dir)
 
-    run_python_cmd('manage.py migrate --all --noinput', instance_dir)
-
-    if upgrade_from_149:
-        pipe_to_django_shell('from ecm.apps.scheduler.models import ScheduledTask; '\
-                             'ScheduledTask.objects.all().delete()' , instance_dir)
-        pipe_to_django_shell('from ecm.apps.common.models import UrlPermission; '\
-                             'UrlPermission.objects.all().delete()' , instance_dir)
+    # if upgrade_from_149:
+    #     pipe_to_django_shell('from ecm.apps.scheduler.models import ScheduledTask; '\
+    #                          'ScheduledTask.objects.all().delete()' , instance_dir)
+    #     pipe_to_django_shell('from ecm.apps.common.models import UrlPermission; '\
+    #                          'UrlPermission.objects.all().delete()' , instance_dir)
 
     log('Database Migration successful.')
 

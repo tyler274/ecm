@@ -33,12 +33,13 @@ for scheme in INSTALL_SCHEMES.values():
 
 dependencies = [
     'django_simple_captcha >= 0.3',
-    'south >= 0.8',
+    #'south >= 0.8',
     'django_compressor >= 1.1.2',
     'setuptools',
-    'django <= 1.5.7',
+    'django',
     'pytz',
     'pycrypto',
+    'django-markwhat',
 ]
 
 setup(

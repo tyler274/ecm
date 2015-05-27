@@ -22,7 +22,7 @@ from django.db.models import Q
 from django.shortcuts import render_to_response
 from django.views.decorators.cache import cache_page
 from django.http import HttpResponseBadRequest
-from django.utils.text import truncate_words
+from django.utils.text import Truncator
 from django.template.context import RequestContext as Ctx
 from django.utils.translation import ugettext as tr
 
@@ -92,7 +92,7 @@ def history_data(request):
         members.append([
             diff.new,
             diff.permalink,
-            truncate_words(diff.nickname, 5),
+            Truncator(diff.nickname).words(5),
             print_time_min(diff.date)
         ])
 

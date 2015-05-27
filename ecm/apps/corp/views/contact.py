@@ -37,12 +37,13 @@ from ecm.apps.common import api
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 WRONG_FINGERPRINT_MSG = '''The corporation "%s" (id: %s) tried to obtain our public info.
 We already are in contact with this corporation, but the public key fingerprint they 
 provided does not match the one we have in the database.'''
 @csrf_exempt
-@transaction.commit_on_success
+@transaction.atomic()
 def handle_contact(request):
     
     if request.method == 'POST':

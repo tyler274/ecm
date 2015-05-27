@@ -69,7 +69,7 @@ def update_transaction_wallet(wallet):
     write_transaction_results(wallet, entries)
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def write_journal_results(wallet, entries):
     LOG.debug("Writing results...")
     for e in entries:
@@ -98,7 +98,7 @@ def write_journal_results(wallet, entries):
     LOG.info("%d entries added in journal" % len(entries))
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def write_transaction_results(wallet, entries):
     LOG.debug("Writing results...")
     for e in entries:

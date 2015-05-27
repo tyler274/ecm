@@ -58,7 +58,7 @@ def account(request):
 
 #------------------------------------------------------------------------------
 @login_required
-@transaction.commit_on_success
+@transaction.atomic()
 def add_api(request):
     if request.method == 'POST':
         form = AddApiKeyForm(request.POST)
@@ -94,7 +94,7 @@ def add_api(request):
 
 #------------------------------------------------------------------------------
 @login_required
-@transaction.commit_on_success
+@transaction.atomic()
 def delete_api(request, keyID):
     api = get_object_or_404(UserAPIKey, keyID=int(keyID))
     if api.user == request.user:
@@ -107,7 +107,7 @@ def delete_api(request, keyID):
 
 #------------------------------------------------------------------------------
 @login_required
-@transaction.commit_on_success
+@transaction.atomic()
 def edit_api(request, keyID):
     api = get_object_or_404(UserAPIKey, keyID=int(keyID))
     if api.user != request.user:
@@ -145,7 +145,7 @@ def edit_api(request, keyID):
 
 #------------------------------------------------------------------------------
 @login_required
-@transaction.commit_on_success
+@transaction.atomic()
 def delete_character(request, characterID):
     character = get_object_or_404(Member, characterID=int(characterID))
     if character.owner == request.user:
@@ -159,7 +159,7 @@ def delete_character(request, characterID):
 
 #------------------------------------------------------------------------------
 @login_required
-@transaction.commit_on_success
+@transaction.atomic()
 def add_binding(request, app_id):
     app = get_object_or_404(ExternalApplication, id=int(app_id))
     if request.method == 'POST':
@@ -180,7 +180,7 @@ def add_binding(request, app_id):
 
 #------------------------------------------------------------------------------
 @login_required
-@transaction.commit_on_success
+@transaction.atomic()
 def delete_binding(request, binding_id):
     binding = get_object_or_404(UserBinding, id=int(binding_id))
     if binding.user == request.user:

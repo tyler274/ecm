@@ -23,7 +23,7 @@ import logging
 from django.template.context import RequestContext as Ctx
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.http import Http404, HttpResponseBadRequest
-from django.utils.text import truncate_words
+from django.utils.text import Truncator
 
 from ecm.utils.format import print_float, print_time_min, verbose_name
 from ecm.views import extract_datatable_params, datatable_ajax_data
@@ -49,7 +49,8 @@ def myorders(request):
     columns = [ col[0] for col in COLUMNS ]
     return render_to_response('ecm/shop/shop_myorders.html', {'columns' : columns}, Ctx(request))
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def myorders_data(request):
     """
@@ -77,11 +78,11 @@ def myorders_data(request):
 
     orders = []
     for order in query[params.first_id:params.last_id]:
-        items = [ row.catalog_entry.typeName for row in order.rows.all() ]
+        items = [row.catalog_entry.typeName for row in order.rows.all()]
         orders.append([
             order.permalink(),
             order.state_text(),
-            truncate_words(', '.join(items), 6),
+            Truncator(', '.join(items)).words(6),
             print_float(order.quote) + ' ISK',
             print_time_min(order.creation_date()),
         ])
@@ -89,7 +90,8 @@ def myorders_data(request):
     return datatable_ajax_data(data=orders, echo=params.sEcho,
                                total=order_count, filtered=filtered_count)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def create(request):
     """
@@ -106,7 +108,8 @@ def create(request):
 
     return render_to_response('ecm/shop/shop_order.html', {'items': items}, Ctx(request))
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def details(request, order_id):
     """
@@ -123,7 +126,7 @@ def details(request, order_id):
     return _order_details(request, order)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 def add_comment(request, order_id):
     """
@@ -144,7 +147,8 @@ def add_comment(request, order_id):
 
     return redirect('/shop/orders/%d/' % order.id)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def change_state(request, order_id, transition):
     """
@@ -176,7 +180,8 @@ def change_state(request, order_id, transition):
     except IllegalTransition, error:
         return _order_details(request, order, error)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def _order_details(request, order, error=None):
     logs = order.logs.all().order_by('-date')
     valid_transitions = [(trans.__name__, verbose_name(trans))
@@ -191,7 +196,8 @@ def _order_details(request, order, error=None):
 
     return render_to_response('ecm/shop/shop_order_details.html', data, Ctx(request))
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def _modify(request, order):
     """
     This should only be accessible through the change_state() function.

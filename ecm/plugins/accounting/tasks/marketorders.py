@@ -62,7 +62,7 @@ def processOrders(orders, connection):
     write_orders(added_orders, removed_orders)
 
 
-@transaction.commit_on_success
+@transaction.atomic()
 def write_orders(new_orders, old_orders):
     """
     Write the API results

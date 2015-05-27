@@ -25,7 +25,7 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext as Ctx
 from django.db.models import Q
 from django.db.models.aggregates import Min, Max
-from django.utils.text import truncate_words
+from django.utils.text import Truncator
 from django.utils import timezone
 
 from ecm.utils.format import print_time_min, print_float
@@ -40,9 +40,9 @@ from ecm.plugins.accounting.models import TransactionEntry
 from ecm.apps.eve import constants
 
 DATE_PATTERN = "%Y-%m-%d"
-    
-    
-#------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def transactions(request):
     walletID = int(request.GET.get('walletID', 0))
@@ -50,15 +50,17 @@ def transactions(request):
     entryForID = int(request.GET.get('entryForID', -1))
     amount = request.GET.get('amount',None)
     comparator = request.GET.get('comparator','>')
-    
-    
+
     from_date = TransactionEntry.objects.all().aggregate(date=Min("date"))["date"]
-    if from_date is None: from_date = datetime.utcfromtimestamp(0)
+    if from_date is None:
+        from_date = datetime.utcfromtimestamp(0)
+
     to_date = TransactionEntry.objects.all().aggregate(date=Max("date"))["date"]
-    if to_date is None: to_date = timezone.now()
-    
-    
-    wallets = [{ 'walletID' : 0, 'name' : 'All', 'selected' : walletID == 0 }]
+
+    if to_date is None:
+        to_date = timezone.now()
+
+    wallets = [{'walletID': 0, 'name': 'All', 'selected': walletID == 0}]
     for w in Corporation.objects.mine().wallets.all().order_by('wallet'):
         wallets.append({
             'walletID' : w.wallet_id,
@@ -92,7 +94,7 @@ def transactions(request):
     return render_to_response("ecm/accounting/wallet_transactions.html", data, Ctx(request))
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 journal_cols = ['date', 'type', 'price', 'quantity', 'amount', 'balance', 'location', 'wallet']
 @check_user_access()
 def transactions_data(request):
@@ -172,7 +174,7 @@ def transactions_data(request):
             entry.quantity,
             amount,
             balance,
-            truncate_words(entry.stationName, 6),
+            Truncator(entry.stationName).words(6),
             entry.wallet.corp_wallets.get(corp=my_corp).name,
         ])
 

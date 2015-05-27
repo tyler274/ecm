@@ -18,13 +18,14 @@
 __date__ = "2011-03-09"
 __author__ = "diabeteman"
 
-
-
-from django.core.exceptions import ValidationError
-import sys, inspect
+import sys
+import inspect
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.utils.deconstruct import deconstructible
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def extract_function(function_str):
     try:
         module, function = function_str.rsplit('.', 1)
@@ -42,8 +43,9 @@ def extract_function(function_str):
         raise ValidationError("Function '%s' not found in module '%s'" % (function, module))
 
 
-#------------------------------------------------------------------------------
-class FunctionValidator:
+# ------------------------------------------------------------------------------
+@deconstructible()
+class FunctionValidator(object):
     message = 'Enter a valid python function'
     code = 'invalid'
 
@@ -60,7 +62,7 @@ class FunctionValidator:
         extract_function(value)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def extract_model(class_str):
     try:
         module, class_name = class_str.rsplit('.', 1)
@@ -80,9 +82,9 @@ def extract_model(class_str):
         raise ValidationError("Model '%s' not found in module '%s'" % (module, class_name))
 
 
-
-#------------------------------------------------------------------------------
-class ModelValidator:
+# ------------------------------------------------------------------------------
+@deconstructible
+class ModelValidator(object):
     message = 'Enter a valid django model'
     code = 'invalid'
 
@@ -98,7 +100,12 @@ class ModelValidator:
         """
         extract_model(value)
 
-#------------------------------------------------------------------------------
+    # example of a deconstruct method.
+    # def deconstruct(self):
+    #     return 'pytz.timezone', (self.zone,), {}
+
+
+# ------------------------------------------------------------------------------
 def extract_args(args_str):
     args = eval(args_str) or {}
     if type(args) != type({}):
@@ -108,8 +115,10 @@ def extract_args(args_str):
             raise ValidationError("keys of the args dictionary must be strings")
     return args
 
-#------------------------------------------------------------------------------
-class ArgsValidator:
+
+# ------------------------------------------------------------------------------
+@deconstructible
+class ArgsValidator(object):
     message = 'Enter a valid arguments dictionary'
     code = 'invalid'
 
@@ -124,4 +133,3 @@ class ArgsValidator:
         Validates that the input matches an arguments dictionary
         """
         extract_args(value)
-

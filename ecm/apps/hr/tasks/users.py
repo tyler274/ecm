@@ -98,9 +98,10 @@ def update_character_associations(user):
     
     # this goes in a separate function to shorten DB transactions
     save_all(user, new_characters, eve_accounts, new_corps, skills)
-    
-#-----------------------------------------------------------------------------
-@transaction.commit_on_success
+
+
+# -----------------------------------------------------------------------------
+@transaction.atomic()
 def save_all(user, characters, eve_accounts, new_corps, skills):
     for account in eve_accounts:
         account.save()
@@ -115,8 +116,8 @@ def save_all(user, characters, eve_accounts, new_corps, skills):
     for skill in skills:
         skill.save()
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def update_all_users_accesses():
     """
     This function will update django users' accesses (that is which groups they are in).

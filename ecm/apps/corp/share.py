@@ -24,19 +24,22 @@ from django.db import transaction
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def process_details(corp, data):
     corp.set_corp_details(data)
     corp.save()
     LOG.info('Updated %r corp details' % corp)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def process_alliance_standings(corp, data):
     process_corp_standings(corp, data, is_corp=False)
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def process_corp_standings(corp, data, is_corp=True):
     
     corp.standings.filter(is_corp_contact=is_corp).delete()
@@ -49,4 +52,3 @@ def process_corp_standings(corp, data, is_corp=True):
                               )
     
     LOG.info('Updated %r %s standings' % (corp, is_corp and 'corp' or 'alliance'))
-        

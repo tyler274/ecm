@@ -63,8 +63,8 @@ def update():
     
     LOG.info("corp info updated")
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def update_corp_info(corpApi, currentTime):
     try:
         try:
@@ -145,8 +145,8 @@ def update_corp_info(corpApi, currentTime):
     return corp
 
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def update_hangar_divisions(corpApi, currentTime):
     LOG.debug("HANGAR DIVISIONS:")
     my_corp = Corporation.objects.mine()
@@ -165,8 +165,8 @@ def update_hangar_divisions(corpApi, currentTime):
     UpdateDate.mark_updated(model=Hangar, date=currentTime)
 
 
-#------------------------------------------------------------------------------
-@transaction.commit_on_success
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def update_wallet_divisions(corpApi, currentTime):
     LOG.debug("WALLET DIVISIONS:")
     my_corp = Corporation.objects.mine()

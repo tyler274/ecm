@@ -29,7 +29,7 @@ from ecm.plugins.accounting.models import EntryType
 LOG = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def update():
     LOG.info("fetching /eve/RefTypes.xml.aspx...")
     # connect to eve API

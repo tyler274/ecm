@@ -115,7 +115,7 @@ def process_contracts(contract_list, connection):
     write_contract_items(new_items, removed_items)
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def write_contracts(new_contracts, old_contracts):
     """
     Write the API results
@@ -132,7 +132,7 @@ def write_contracts(new_contracts, old_contracts):
         raise
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def write_contract_items(new_items, old_items):
     """
     Write the API results for contract items to DB.

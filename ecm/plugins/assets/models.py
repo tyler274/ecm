@@ -19,9 +19,11 @@ __date__ = "2010-03-18"
 __author__ = "diabeteman"
 
 from django.db import models
+from django.db.models import deletion
 from django.core.exceptions import ObjectDoesNotExist
 
-from ecm.lib import bigintpatch, softfk
+# from ecm.lib import bigintpatch, softfk
+
 
 #------------------------------------------------------------------------------
 class Asset(models.Model):
@@ -35,7 +37,11 @@ class Asset(models.Model):
     hangarID = models.PositiveIntegerField() # hangar division
     container1 = models.BigIntegerField(null=True, blank=True) # first container or ship
     container2 = models.BigIntegerField(null=True, blank=True) # second container or ship
-    eve_type = softfk.SoftForeignKey(to='eve.Type')
+
+    # Switch to native django way
+    # eve_type = softfk.SoftForeignKey(to='eve.Type')
+    eve_type = models.ForeignKey('eve.Type', db_constraint=False, on_delete=deletion.DO_NOTHING)
+
     quantity = models.BigIntegerField(default=0)
     flag = models.BigIntegerField() # used to determine the state or path of the asset
     singleton = models.BooleanField(default=False) # true if assembled
@@ -94,11 +100,12 @@ class AssetDiff(models.Model):
     class Meta:
         get_latest_by = 'date'
 
-    id = bigintpatch.BigAutoField(primary_key=True) #@ReservedAssignment
+    id = models.BigIntegerField(primary_key=True) #@ReservedAssignment
     solarSystemID = models.BigIntegerField()
     stationID = models.BigIntegerField()
     hangarID = models.PositiveIntegerField() # hangar division
-    eve_type = softfk.SoftForeignKey(to='eve.Type')
+    # eve_type = softfk.SoftForeignKey(to='eve.Type')
+    eve_type = models.ForeignKey('eve.Type', db_constraint=False, on_delete=deletion.DO_NOTHING)
     quantity = models.IntegerField(default=0)
     date = models.DateTimeField(db_index=True)
     new = models.BooleanField()

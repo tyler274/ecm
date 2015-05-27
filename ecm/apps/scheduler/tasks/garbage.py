@@ -33,7 +33,7 @@ def collect_garbage():
         collect_one(collector)
 
 #------------------------------------------------------------------------------
-@transaction.commit_on_success
+@transaction.atomic()
 def collect_one(collector):
     LOG.info("collecting old records for model: %s" % collector.model)
     model = collector.get_model()

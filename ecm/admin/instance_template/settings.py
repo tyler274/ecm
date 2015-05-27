@@ -230,7 +230,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'captcha',
-    'south',
+    # 'south',
     'compressor',
 ]
 

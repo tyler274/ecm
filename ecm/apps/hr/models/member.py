@@ -23,17 +23,19 @@ import urlparse
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils.text import truncate_words
+from django.db.models import deletion
+from django.utils.text import Truncator
 
 from ecm.apps.corp.models import Corporation
-from ecm.lib import bigintpatch, softfk
+# from ecm.lib import bigintpatch, softfk
 from ecm.apps.hr import NAME as app_prefix
 from ecm.apps.eve.models import CelestialObject
 
 # little trick to change the Users' absolute urls
 User.get_absolute_url = lambda self: '/hr/players/%s/' % self.id
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Member(models.Model):
     """
     Member of the corporation
@@ -141,7 +143,7 @@ class Member(models.Model):
         else:
             location_name = self.location
         url = self.DOTLAN_SEARCH_URL + '?' + urllib.urlencode({'q': location_name})
-        return self.DOTLAN_LINK % (url, truncate_words(location_name, 6))
+        return self.DOTLAN_LINK % (url, Truncator(location_name).words(6))
 
     @property
     def dotlan_jump_range(self, ship='Thanatos', skill=5):
@@ -192,7 +194,8 @@ class Member(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class MemberDiff(models.Model):
     """
     Represents the arrival or departure of a member of the corporation
@@ -201,7 +204,7 @@ class MemberDiff(models.Model):
         app_label = 'hr'
         ordering = ['date']
 
-    id = bigintpatch.BigAutoField(primary_key=True)  # @ReservedAssignment
+    id = models.BigIntegerField(primary_key=True)  # @ReservedAssignment
     member = models.ForeignKey(Member, related_name="diffs")
     name = models.CharField(max_length=100, db_index=True)
     nickname = models.CharField(max_length=256, db_index=True)
@@ -232,12 +235,13 @@ class MemberDiff(models.Model):
         else:
             return '%s leaved' % self.name
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class MemberSession(models.Model):
     class Meta:
         app_label = 'hr'
 
-    id = bigintpatch.BigAutoField(primary_key=True)  # @ReservedAssignment
+    id = models.BigIntegerField(primary_key=True)  # @ReservedAssignment
     # TODO: somehow use FK's
     # member = models.ForeignKey(Member, related_name="diffs")
     # no defaults! forcing valid entries!
@@ -254,14 +258,18 @@ class MemberSession(models.Model):
     def __hash__(self):
         return self.id
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Skill(models.Model):
 
     class Meta:
         app_label = 'hr'
 
     character = models.ForeignKey(Member, related_name='skills')
-    eve_type = softfk.SoftForeignKey(to='eve.Type', null=True, blank=True)
+
+    # eve_type = softfk.SoftForeignKey(to='eve.Type', null=True, blank=True)
+    eve_type = models.ForeignKey('eve.Type', db_constraint=False, on_delete=deletion.DO_NOTHING)
+
     skillpoints = models.IntegerField(default=0)
     level = models.IntegerField(default=0)
 
@@ -272,7 +280,8 @@ class Skill(models.Model):
     def name(self):
         return self.eve_type.typeName
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Recruit(models.Model):
 
     class Meta:
@@ -282,7 +291,8 @@ class Recruit(models.Model):
     reference = models.ManyToManyField(User, null=True, blank=True, related_name='reference')
     recruiter = models.ForeignKey(User, null=True, blank=True, related_name='recruiter')
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class EmploymentHistory(models.Model):
     class Meta:
         app_label = 'hr'

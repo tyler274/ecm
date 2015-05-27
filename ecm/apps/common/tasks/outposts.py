@@ -27,8 +27,9 @@ from ecm.apps.common import api
 from ecm.apps.eve import constants
 
 LOG = logging.getLogger(__name__)
-#------------------------------------------------------------------------------
-@transaction.commit_on_success()
+
+# ------------------------------------------------------------------------------
+@transaction.atomic()
 def update():
     """
     Retrieve all corp owned stations and update their name in the EVE database.
