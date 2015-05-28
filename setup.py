@@ -40,6 +40,10 @@ dependencies = [
     'pytz',
     'pycrypto',
     'django-markwhat',
+    'django-object-tools',
+    'django-export',
+    'django-flat-theme',
+    'django-redis',
 ]
 
 setup(
@@ -72,6 +76,9 @@ setup(
     # DEPENDENCIES
     provides = ['ecm'],
     install_requires = dependencies,
+    dependency_links=[
+        "git+https://github.com/predatell/django-object-tools.git@0.2.1#egg=django-object-tools"
+    ],
 
     # CONTENTS
     packages = find_packages(),

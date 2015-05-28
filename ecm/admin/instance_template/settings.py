@@ -212,8 +212,18 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': rel_path('cache'),
 #        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
+    },
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "unix:///tmp/redis.sock?db=0",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         }
+#     },
 }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
 CAPTCHA_NOISE_FUNCTIONS = ()
@@ -223,12 +233,14 @@ CAPTCHA_NOISE_FUNCTIONS = ()
 #################
 
 INSTALLED_APPS = [
+    'object_tools',
+    'flat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
-
+    'export',
     'captcha',
     # 'south',
     'compressor',
@@ -252,6 +264,12 @@ ECM_PLUGIN_APPS = [
 ]
 INSTALLED_APPS += ECM_PLUGIN_APPS
 
+
+# Adds export functionality
+SERIALIZATION_MODULES = {
+    'csv': 'export.serializers.csv_serializer'
+}
+
 ###########
 # LOGGING #
 ###########
@@ -272,7 +290,7 @@ LOGGING = {
             'formatter': 'ecm_formatter',
             'level': 'INFO',
             'filename': os.path.join(LOG_FILES_DIR, 'ecm.log'),
-            #'delay': True, # wait until first log record is emitted to open file
+            # 'delay': True, # wait until first log record is emitted to open file
             'when': 'midnight', # roll over each day at midnight
             'backupCount': 15, # keep 15 backup files
         },
@@ -290,7 +308,7 @@ LOGGING = {
             'formatter': 'ecm_formatter',
             'level': 'ERROR',
             'filename': os.path.join(LOG_FILES_DIR, 'error.log'),
-            #'delay': True,
+            # 'delay': True,
             'when': 'midnight',
             'backupCount': 15,
         },
@@ -311,7 +329,7 @@ LOGGING = {
 }
 
 LOCALE_PATHS = (
-    #don't strip the comma. for some reason i can't fathom, django won't take into account the LOCALE_PATHS tuple (which
-    #isn't really one ftm, since we don't have yet per app/plugins locale/ directories)
+    # don't strip the comma. for some reason i can't fathom, django won't take into account the LOCALE_PATHS tuple (which
+    # isn't really one ftm, since we don't have yet per app/plugins locale/ directories)
     rel_path('locale', root=ECM_PACKAGE),
     )

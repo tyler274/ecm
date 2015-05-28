@@ -110,8 +110,9 @@ def journal_data(request):
         return HttpResponseBadRequest()
 
     orderBy = journal_cols[params.column]
-    if not params.asc: orderBy = "-" + orderBy    
-    query = JournalEntry.objects.select_related(.all().order_by(orderBy)  # depth was 1
+    if not params.asc:
+        orderBy = "-" + orderBy
+    query = JournalEntry.objects.select_related().all().order_by(orderBy)  # depth was 1
 
     if params.search or params.walletID or params.entryTypeID or params.amount or (params.from_date and params.to_date):
         total_entries = query.count()
