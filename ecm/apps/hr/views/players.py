@@ -60,7 +60,7 @@ def player_list_data(request):
     except KeyError:
         return HttpResponseBadRequest()
 
-    query = User.objects.select_related(depth=2).filter(is_active=True)
+    query = User.objects.select_related().filter(is_active=True) #depth was 2
     query = query.annotate(account_count=Count("eve_accounts"))
     query = query.annotate(char_count=Count("characters"))
     query = query.annotate(group_count=Count("groups"))
@@ -104,7 +104,7 @@ def player_details(request, player_id):
     player = get_object_or_404(User, id=int(player_id))
 
     try:
-        player = User.objects.select_related(depth=1).get(id=int(player_id))
+        player = User.objects.select_related().get(id=int(player_id))  # depth was 1
     except User.DoesNotExist:
         raise Http404()
 

@@ -61,7 +61,7 @@ def myorders_data(request):
     except Exception, e:
         return HttpResponseBadRequest(str(e))
 
-    query = Order.objects.filter(originator=request.user).select_related(depth=3)
+    query = Order.objects.filter(originator=request.user).select_related()  # depth was 3
 
     order_count = query.count()
     if params.search:

@@ -19,7 +19,7 @@ __date__ = "2012 2 2"
 __author__ = "diabeteman"
 
 from django.http import HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponse, \
-    HttpResponseNotFound
+    HttpResponseNotFound, JsonResponse
 
 from ecm.utils import _json as json
 from ecm.views import JSON
@@ -68,9 +68,10 @@ def parse_eft(request):
             'quantity': 0,
             'price': None
         })
-    return HttpResponse(json.dumps(items), mimetype=JSON)
+    return JsonResponse(items)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def extract_order_items(request):
     items = []
     valid_order = True
@@ -122,7 +123,7 @@ def get_item_id(request):
                 surcharge = PricingPolicy.resolve_surcharge(item, request.user, cost)
                 price = cost + surcharge
             
-            return HttpResponse(json.dumps([item.typeID, item.typeName, price]), mimetype=JSON)
+            return JsonResponse([item.typeID, item.typeName, price])
         else:
             return HttpResponseNotFound('Item <em>%s</em> not available in the shop.' % querystring)
     else:

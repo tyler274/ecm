@@ -89,9 +89,9 @@ def poses_data(request):
     
     # Query all authorised by default except for superuser
     if request.user.is_superuser:
-        query = POS.objects.all().select_related(depth=1)
+        query = POS.objects.all().select_related()  # depth was 1
     else:
-        query = POS.objects.select_related(depth=1)
+        query = POS.objects.select_related()  # depth was 1
         query = query.filter(Q(authorized_groups__isnull=True) | 
                              Q(authorized_groups__in=request.user.groups.all()))
     

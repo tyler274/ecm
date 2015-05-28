@@ -21,7 +21,7 @@ __author__ = "Ajurna"
 from django.db.models.aggregates import Count
 from django.template.context import RequestContext as Ctx
 from django.shortcuts import render_to_response
-from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed
+from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed, JsonResponse
 
 from ecm.utils import _json as json
 from ecm.apps.common import eft
@@ -136,9 +136,10 @@ def parse_eft(request):
             'typeName': item.typeName,
             'level': items[item],
         })
-    return HttpResponse(json.dumps(out), mimetype=JSON)
+    return JsonResponse(out)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def get_item_id(request):
     querystring = request.GET.get('q', None)
@@ -151,13 +152,14 @@ def get_item_id(request):
                 out.append([item.typeID, item.typeName, 1])
             for i in item.skill_reqs.all():
                 out.append([i.skill.typeID, i.skill.typeName, i.required_level])
-            return HttpResponse(json.dumps(out), mimetype=JSON)
+            return JsonResponse(out)
         else:
             return HttpResponseNotFound('Item <em>%s</em> not Skill, Ship or Module.' % querystring)
     else:
         return HttpResponseBadRequest('Missing "q" parameter.')
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def search_item(request):
     querystring = request.GET.get('q', None)

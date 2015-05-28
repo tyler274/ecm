@@ -339,7 +339,7 @@ def get_hangar_content_data(request, date_str, solarSystemID, stationID, hangarI
                                             hangarID=int(hangarID),
                                             date__range=(date, next_date))
     jstree_data = []
-    for a in assets_query.select_related(depth=1):
+    for a in assets_query.select_related():  # depth was 1
 
         if a.quantity < 0:
             icon = 'removed'

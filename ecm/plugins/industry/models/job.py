@@ -149,7 +149,7 @@ class Job(models.Model):
 
         The number of runs is calculated from the needed quantity
         """
-        item = Type.objects.select_related(depth=2).get(pk=item_id)
+        item = Type.objects.select_related().get(pk=item_id)  # depth was 2
         try:
             if item.blueprint is None:
                 # item cannot be manufactured

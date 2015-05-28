@@ -33,12 +33,13 @@ def members(request):
         data.append(member.get_shared_info())
     return encrypted_response(request, data, compress=True)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @valid_session_required
 def players(request):
     my_corp = Corporation.objects.mine()
     
-    users = User.objects.filter(is_active=True).select_related(depth=1)
+    users = User.objects.filter(is_active=True).select_related()  # depth was 1
     users = users.annotate(char_count=Count("characters"))
     players = users.filter(char_count__gt=0)
     

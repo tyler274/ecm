@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 @login_required
 def account(request):
     external_apps = []
-    for app in ExternalApplication.objects.select_related(depth=2).all():
+    for app in ExternalApplication.objects.select_related().all():  # depth was 2
         try:
             binding = app.user_bindings.all().get(user=request.user)
         except UserBinding.DoesNotExist:

@@ -21,7 +21,7 @@ __author__ = "diabeteman"
 
 import logging
 
-from django.http import Http404, HttpResponseBadRequest, HttpResponse
+from django.http import Http404, HttpResponseBadRequest, HttpResponse, JsonResponse
 from django.template.context import RequestContext as Ctx
 from django.db.models.aggregates import Count
 from django.shortcuts import get_object_or_404, render_to_response
@@ -250,9 +250,10 @@ def availability(request, item_id):
         logger.info('"%s" changed availability for item "%s" -> %s' % (request.user,
                                                                        item.typeName,
                                                                        available))
-    return HttpResponse(json.dumps(item.is_available), mimetype=JSON)
+    return JsonResponse(item.is_available)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @check_user_access()
 def add_blueprint(request, item_id):
     """
@@ -276,4 +277,4 @@ def add_blueprint(request, item_id):
         'runs': bp.runs,
         'url': bp.url,
     }
-    return HttpResponse(json.dumps(bp_dict), mimetype=JSON)
+    return JsonResponse(bp_dict)

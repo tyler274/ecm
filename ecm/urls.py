@@ -28,7 +28,7 @@ from ecm.views.account.forms import PasswordChangeForm, PasswordResetForm, Passw
 admin.autodiscover()
 
 def robots(request):
-    return HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")
+    return HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")
 
 urlpatterns = patterns('',
     ###########################################################################

@@ -66,8 +66,8 @@ def access_changes_data(request):
     except:
         return HttpResponseBadRequest()
 
-    roles_query = RoleMemberDiff.objects.select_related(depth=1).all()
-    titles_query = TitleMemberDiff.objects.select_related(depth=1).all()
+    roles_query = RoleMemberDiff.objects.select_related().all()  # depths were 1
+    titles_query = TitleMemberDiff.objects.select_related().all()
 
     if params.search:
         total_count = roles_query.count() + titles_query.count()

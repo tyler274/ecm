@@ -41,9 +41,10 @@ MEMBERS_COLUMNS = [
     {'sTitle': tr('Titles'),       'bVisible': False, 'db_field': None, },
 ]
 
+
 def get_members(query, first_id, last_id, search_str=None, sort_by=0, asc=True, for_csv=False):
 
-    query = query.select_related(depth=2) # improve performance
+    query = query.select_related()  # depth was removed
 
     sort_col = MEMBERS_COLUMNS[sort_by]['db_field']
     # SQL hack for making a case insensitive sort

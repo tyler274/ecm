@@ -172,5 +172,5 @@ def encrypted_response(request, data, compress=False):
     else:
         mime = 'application/octet-stream'
     encrypted_data = crypto.aes_encrypt(request.session[AUTH_SECRET], data)
-    return HttpResponse(encrypted_data, mimetype=mime)
+    return HttpResponse(encrypted_data, content_type=mime)
 

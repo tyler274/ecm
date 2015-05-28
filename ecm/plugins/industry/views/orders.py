@@ -199,14 +199,15 @@ def add_comment(request, order_id):
 
     return redirect('/industry/orders/%d/' % order.id)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def _order_details(request, order, error=None):
     logs = order.logs.all().order_by('-date')
     valid_transitions = [(trans.__name__, verbose_name(trans))
                          for trans in order.get_valid_transitions(customer=False)]
 
     # we get the 1st jobs associated to this order's rows
-    jobs = order.jobs.select_related(depth=2).filter(parent_job__isnull=True)
+    jobs = order.jobs.select_related().filter(parent_job__isnull=True)  # depth was 2
 
     data = {
         'order': order,
@@ -219,7 +220,8 @@ def _order_details(request, order, error=None):
 
     return render_to_response('ecm/industry/order_details.html', data, Ctx(request))
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 JOB_SPAN = '<span class="industry-job" title="%s"><strong>%s</strong> - x <i>%s</i></span>'
 def _build_jobs_tree(jobs):
     jobs_tree = []

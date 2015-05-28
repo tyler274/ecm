@@ -184,7 +184,7 @@ class BlueprintType(models.Model):
         return acts
 
     def materials(self, activityID):
-        return self.requirements.select_related(depth=2).filter(activityID=activityID)
+        return self.requirements.select_related().filter(activityID=activityID)  # refine the select_related
 
     def get_duration(self, activity, runs=1, pe_level=0):
         """

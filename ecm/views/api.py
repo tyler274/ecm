@@ -28,10 +28,11 @@ from ecm.utils import _json as json
 from ecm.views.decorators import basic_auth_required
 from ecm.apps.common.models import ExternalApplication, GroupBinding, UserBinding, Setting
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 @basic_auth_required(username=Setting.get('common_cron_username'))
 def players(request):
-    query = User.objects.select_related(depth=3).filter(is_active=True)
+    query = User.objects.select_related().filter(is_active=True)  # depth was 3
     query = query.annotate(char_count=Count("characters"))
     query = query.filter(char_count__gt=0)
     query = query.exclude(username__in=[Setting.get('common_cron_username'), 
@@ -56,7 +57,7 @@ def players(request):
 @basic_auth_required(username=Setting.get('common_cron_username'))
 def user_bindings(request, app_name):
     app = get_object_or_404(ExternalApplication, name=app_name)
-    query = app.user_bindings.select_related(depth=3)
+    query = app.user_bindings.select_related()  # depth was 3
     query = query.annotate(char_count=Count("user__characters"))
     query = query.filter(user__is_active=True)
     query = query.filter(char_count__gt=0)
@@ -90,9 +91,9 @@ def group_bindings(request, app_name):
     app = get_object_or_404(ExternalApplication, name=app_name)
     groups = {}
 
-    users = UserBinding.objects.filter(external_app=app).select_related(depth=1)
+    users = UserBinding.objects.filter(external_app=app).select_related()  # depth was 1
 
-    for gb in app.group_bindings.select_related(depth=3):
+    for gb in app.group_bindings.select_related():  # depth was 3
         group_users = users.filter(user__in=gb.group.user_set.all())
         external_ids = group_users.values_list('external_id', flat=True)
         try:

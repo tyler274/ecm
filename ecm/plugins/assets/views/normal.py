@@ -345,7 +345,7 @@ def get_hangar_content_data(request, solarSystemID, closest_obj_id, stationID, h
                                         container1=None, container2=None)
 
     jstree_data = []
-    for a in assets_query.select_related(depth=1):
+    for a in assets_query.select_related():  # depth was 1
 
         try:
             icon = CATEGORY_ICONS[a.eve_type.categoryID]
@@ -393,7 +393,7 @@ def get_can1_content_data(request, solarSystemID, closest_obj_id, stationID, han
                                         stationID=stationID, hangarID=hangarID,
                                         container1=container1, container2=None)
     json_data = []
-    for a in assets_query.select_related(depth=1):
+    for a in assets_query.select_related():  # depth was 1
         item = {}
         try:    icon = CATEGORY_ICONS[a.eve_type.categoryID]
         except: icon = 'item'
@@ -424,7 +424,7 @@ def get_can2_content_data(request, solarSystemID, closest_obj_id, stationID, han
                                         container1=int(container1),
                                         container2=int(container2))
     json_data = []
-    for a in assets_query.select_related(depth=1):
+    for a in assets_query.select_related():  # depth was 1
         item = {}
         try:    icon = CATEGORY_ICONS[a.eve_type.category]
         except: icon = 'item'

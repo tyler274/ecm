@@ -23,7 +23,7 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as tr
 
@@ -71,8 +71,12 @@ DATATABLES_DEFAULTS = {
     },
 }
 
-#------------------------------------------------------------------------------
-class DatatableParams: pass
+
+# ------------------------------------------------------------------------------
+class DatatableParams:
+    pass
+
+
 def extract_datatable_params(request):
     REQ = request.GET if request.method == 'GET' else request.POST
     params = DatatableParams()
@@ -86,7 +90,8 @@ def extract_datatable_params(request):
     params.format = REQ.get("sFormat")
     return params
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def datatable_ajax_data(data, echo, total=None, filtered=None):
     if total is None:
         total = len(data)
@@ -98,9 +103,10 @@ def datatable_ajax_data(data, echo, total=None, filtered=None):
         'iTotalDisplayRecords' : filtered,
         'aaData' : data,
     }
-    return HttpResponse(json.dumps(json_data), mimetype=JSON)
+    return JsonResponse(json_data)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def datatable_csv_data(data, headers=None, filename=None):
     
     csv_writer = CSVUnicodeWriter(stream=StringIO())
@@ -109,13 +115,14 @@ def datatable_csv_data(data, headers=None, filename=None):
         csv_writer.writerow(headers)
     csv_writer.writerows(data)
     
-    response = HttpResponse(csv_writer.stream.getvalue(), mimetype='text/csv')
+    response = HttpResponse(csv_writer.stream.getvalue(), content_type='text/csv')
     if filename is not None:
         response['Content-Disposition'] = 'attachment;filename="%s"' % filename
         
     return response
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def create_app_objects(app):
     for task in app.tasks:
         if not ScheduledTask.objects.filter(function=task['function']):

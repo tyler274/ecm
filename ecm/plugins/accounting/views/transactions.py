@@ -110,7 +110,7 @@ def transactions_data(request):
         params.to_date     = timezone.make_aware(datetime.strptime(REQ.get('to_date', None), DATE_PATTERN), timezone.get_current_timezone())
     except:
         return HttpResponseBadRequest()
-    query = TransactionEntry.objects.select_related(depth=1).all().order_by('-date')
+    query = TransactionEntry.objects.select_related().all().order_by('-date')  # depth was 1
 
     if params.search or params.walletID or params.entryTypeID or params.amount or (params.from_date and params.to_date):
         total_entries = query.count()
