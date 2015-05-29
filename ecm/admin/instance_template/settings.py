@@ -97,7 +97,7 @@ DATABASES = { # see http://docs.djangoproject.com/en/1.3/ref/settings/#databases
 
 SITE_ID = 1
 
-ALLOWED_HOSTS = [ '127.0.0.1', 'localhost' ]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 if config.has_option('misc', 'external_host_name'):
     ALLOWED_HOSTS += config.get('misc', 'external_host_name').split()
 
@@ -106,7 +106,7 @@ if config.has_option('misc', 'external_host_name'):
 # E-MAIL #
 ##########
 # to enable email error reporting, add tuples in there, ('name', 'email@adddress.com')
-ADMINS = [ ('', email) for email in config.get('email', 'admin_email').split() ]
+ADMINS = [('', email) for email in config.get('email', 'admin_email').split()]
 
 # for development, you can use python dummy smtp server, run this command:
 # >>> python -m smtpd -n -c DebuggingServer localhost:25
@@ -155,13 +155,13 @@ STATICFILES_FINDERS = (
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_CSS_FILTERS = (
     'compressor.filters.css_default.CssAbsoluteFilter',
-    #'compressor.filters.csstidy.CSSTidyFilter',
+    # 'compressor.filters.csstidy.CSSTidyFilter',
 )
 COMPRESS_JS_FILTERS = (
-    #'compressor.filters.jsmin.JSMinFilter',
+    # 'compressor.filters.jsmin.JSMinFilter',
 )
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
-#COMPRESS_ENABLED = True
+# COMPRESS_ENABLED = True
 
 #############
 # TEMPLATES #
@@ -170,6 +170,8 @@ COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+         # aside from looking in each django app, the template loaders
+         # will look in these directories
         'DIRS': [
             (rel_path('templates/', root=ECM_PACKAGE)),
         ],
@@ -189,6 +191,7 @@ TEMPLATES = [
                 'ecm.views.context_processors.motd',
             ],
             'debug': True,
+            # List of callables that know how to import templates from various sources.
             'loaders': [
                 ('django.template.loaders.cached.Loader', [
                     'django.template.loaders.filesystem.Loader', 'django.template.loaders.app_directories.Loader',
@@ -197,36 +200,6 @@ TEMPLATES = [
         },
     },
 ]
-
-
-# TEMPLATE_DEBUG = DEBUG
-# List of callables that know how to import templates from various sources.
-# TEMPLATE_LOADERS = (
-#     'django.template.loaders.filesystem.Loader',
-#     'django.template.loaders.app_directories.Loader',
-# )
-# TEMPLATE_DIRS = (
-#     # aside from looking in each django app, the template loaders
-#     # will look in these directories
-#     rel_path('templates/', root=ECM_PACKAGE),
-# )
-# TEMPLATE_CONTEXT_PROCESSORS = (
-#     'django.core.context_processors.debug',
-#     'django.core.context_processors.i18n',
-#     'django.core.context_processors.media',
-#     'django.core.context_processors.static',
-#     'django.core.context_processors.tz',
-#     'django.contrib.auth.context_processors.auth',
-#     'django.contrib.messages.context_processors.messages',
-#
-#     'ecm.views.context_processors.corporation_name',
-#     'ecm.views.context_processors.menu',
-#     'ecm.views.context_processors.version',
-#     'ecm.views.context_processors.motd',
-#
-#     'social.apps.django_app.context_processors.backends',
-#     'social.apps.django_app.context_processors.login_redirect',
-# )
 
 ########
 # MISC #
@@ -377,4 +350,4 @@ LOCALE_PATHS = (
     # don't strip the comma. for some reason i can't fathom, django won't take into account the LOCALE_PATHS tuple (which
     # isn't really one ftm, since we don't have yet per app/plugins locale/ directories)
     rel_path('locale', root=ECM_PACKAGE),
-    )
+)
