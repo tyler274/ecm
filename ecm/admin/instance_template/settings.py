@@ -23,8 +23,11 @@ from ConfigParser import SafeConfigParser
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 
+
 def rel_path(pth, root=ROOT):
     return os.path.abspath(os.path.join(root, pth)).replace('\\', '/')
+
+
 def package_path(package):
     return os.path.abspath(os.path.dirname(__import__(package).__file__))
 
@@ -163,31 +166,67 @@ COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 #############
 # TEMPLATES #
 #############
-TEMPLATE_DEBUG = DEBUG
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-TEMPLATE_DIRS = (
-    # aside from looking in each django app, the template loaders
-    # will look in these directories
-    rel_path('templates/', root=ECM_PACKAGE),
-)
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-    'django.core.context_processors.static',
-    'django.core.context_processors.tz',
-    'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages',
+# aside from looking in each django app, the template loaders will look in these directories
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            (rel_path('templates/', root=ECM_PACKAGE)),
+        ],
+        'OPTIONS': {
+            'context_processors': [
+                'django.core.context_processors.debug',
+                'django.core.context_processors.i18n',
+                'django.core.context_processors.media',
+                'django.core.context_processors.static',
+                'django.core.context_processors.tz',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
 
-    'ecm.views.context_processors.corporation_name',
-    'ecm.views.context_processors.menu',
-    'ecm.views.context_processors.version',
-    'ecm.views.context_processors.motd',
-)
+                'ecm.views.context_processors.corporation_name',
+                'ecm.views.context_processors.menu',
+                'ecm.views.context_processors.version',
+                'ecm.views.context_processors.motd',
+            ],
+            'debug': True,
+            'loaders': [
+                ('django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader', 'django.template.loaders.app_directories.Loader',
+                ]),
+            ],
+        },
+    },
+]
+
+
+# TEMPLATE_DEBUG = DEBUG
+# List of callables that know how to import templates from various sources.
+# TEMPLATE_LOADERS = (
+#     'django.template.loaders.filesystem.Loader',
+#     'django.template.loaders.app_directories.Loader',
+# )
+# TEMPLATE_DIRS = (
+#     # aside from looking in each django app, the template loaders
+#     # will look in these directories
+#     rel_path('templates/', root=ECM_PACKAGE),
+# )
+# TEMPLATE_CONTEXT_PROCESSORS = (
+#     'django.core.context_processors.debug',
+#     'django.core.context_processors.i18n',
+#     'django.core.context_processors.media',
+#     'django.core.context_processors.static',
+#     'django.core.context_processors.tz',
+#     'django.contrib.auth.context_processors.auth',
+#     'django.contrib.messages.context_processors.messages',
+#
+#     'ecm.views.context_processors.corporation_name',
+#     'ecm.views.context_processors.menu',
+#     'ecm.views.context_processors.version',
+#     'ecm.views.context_processors.motd',
+#
+#     'social.apps.django_app.context_processors.backends',
+#     'social.apps.django_app.context_processors.login_redirect',
+# )
 
 ########
 # MISC #
@@ -205,6 +244,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'ecm.lib.sso_backends.KarmaFleetOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 CACHES = {
@@ -240,6 +284,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'export',
     'captcha',
     # 'south',
