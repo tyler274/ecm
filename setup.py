@@ -33,7 +33,6 @@ for scheme in INSTALL_SCHEMES.values():
 
 dependencies = [
     'django_simple_captcha >= 0.3',
-    #'south >= 0.8',
     'django_compressor >= 1.1.2',
     'setuptools',
     'django',
@@ -44,6 +43,7 @@ dependencies = [
     'django-export',
     'django-flat-theme',
     'django-redis',
+    'django-debug-toolbar',
 ]
 
 setup(
