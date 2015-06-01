@@ -23,6 +23,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 # from ecm.lib import bigintpatch
+from ecm.lib import bigint
 from ecm.apps.corp.models import Wallet
 from ecm.apps.eve.models import Type, CelestialObject
 
@@ -32,7 +33,7 @@ class EntryType(models.Model):
     """
     Wallet journal entry transaction type
     """
-    refTypeID = models.PositiveIntegerField(primary_key=True)
+    refTypeID = models.PositiveIntegerField(primary_key=True, db_index=True)
     refTypeName = models.CharField(max_length=64)
 
     PLAYER_DONATION = 10
@@ -49,10 +50,12 @@ class JournalEntry(models.Model):
     Represents a wallet journal entry that can be fetched from the API
     at the following url http://api.eve-online.com/corp/WalletJournal.xml.aspx
     """
-    id         = models.BigIntegerField(primary_key=True) # @ReservedAssignment
+
+    # Need a BigAutoField or proper BigIntegerField PK
+    id         = bigint.BigAutoField(primary_key=True, db_index=True) # @ReservedAssignment
     refID      = models.BigIntegerField()  # the couple (refID, wallet_id) should be unique
     wallet     = models.ForeignKey(Wallet, db_index=True)
-    date       = models.DateTimeField()
+    date       = models.DateTimeField(db_index=True)
     type       = models.ForeignKey(EntryType, db_index=True)  # @ReservedAssignment
     ownerName1 = models.CharField(max_length=128)  # first party of the transaction
     ownerID1   = models.BigIntegerField()
@@ -60,7 +63,7 @@ class JournalEntry(models.Model):
     ownerID2   = models.BigIntegerField()
     argName1   = models.CharField(max_length=128)
     argID1     = models.BigIntegerField()
-    amount     = models.FloatField() # amount of the transaction
+    amount     = models.FloatField(db_index=True) # amount of the transaction
     balance    = models.FloatField() # balance of the account after the transaction
     reason     = models.CharField(max_length=512)  # comment
 
@@ -175,6 +178,7 @@ class Contract(models.Model):
     def __repr__(self):
         return str(self.contractID)
 
+    # Need a BigAutoField or proper BigIntegerField PK
     contractID     = models.BigIntegerField(primary_key=True) # Unique ID for this contract.
     issuerID       = models.BigIntegerField() # Character ID who created contract
     issuerCorpID   = models.BigIntegerField() # Corporation ID who created contract
@@ -246,7 +250,8 @@ class ContractItem(models.Model):
     singleton   = models.SmallIntegerField()
     included    = models.SmallIntegerField()
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class MarketOrder(models.Model):
     """
     Represents a contract item that can be fetched from the API
@@ -268,6 +273,7 @@ class MarketOrder(models.Model):
     def __hash__(self):
         return self.orderID
 
+    # Need a BigAutoField or proper BigIntegerField PK
     orderID      = models.BigIntegerField(primary_key=True)
     charID       = models.BigIntegerField()
     stationID    = models.BigIntegerField()
@@ -277,7 +283,7 @@ class MarketOrder(models.Model):
     orderState   = models.SmallIntegerField(choices=STATE.items())
     typeID       = models.IntegerField()
     range        = models.SmallIntegerField() #@ReservedAssignment
-    accountKey   = models.ForeignKey(Wallet, related_name='market_orders')
+    accountKey   = models.ForeignKey(Wallet, related_name='market_orders', db_constraint=False)
     duration     = models.SmallIntegerField()
     escrow       = models.FloatField()
     price        = models.FloatField()

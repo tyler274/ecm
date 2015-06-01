@@ -33,7 +33,8 @@ from ecm.apps.common import api
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def update():
     """
     Fetch a /corp/CorporationSheet.xml.aspx api response, parse it and store it to
@@ -52,8 +53,10 @@ def update():
     corp = update_corp_info(corpApi, currentTime)
 
     LOG.debug("name: %s [%s]", corp.corporationName, corp.ticker)
-    if corp.alliance: LOG.debug("alliance: %s <%s>", corp.alliance.name, corp.alliance.shortName)
-    else: LOG.debug("alliance: None")
+    if corp.alliance:
+        LOG.debug("alliance: %s <%s>", corp.alliance.name, corp.alliance.shortName)
+    else:
+        LOG.debug("alliance: None")
     LOG.debug("CEO: %s", corpApi.ceoName)
     LOG.debug("tax rate: %d%%", corp.taxRate)
     LOG.debug("member limit: %d", corp.memberLimit)
@@ -69,7 +72,7 @@ def update_corp_info(corpApi, currentTime):
     try:
         try:
             try:
-                alliance = Alliance.objects.get(allianceID = corpApi.allianceID)
+                alliance = Alliance.objects.get(allianceID=corpApi.allianceID)
             except Alliance.DoesNotExist:
                 LOG.info("Adding new Alliance: "+ corpApi.allianceName)
                 alliance = Alliance()

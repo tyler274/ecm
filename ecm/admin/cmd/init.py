@@ -49,7 +49,8 @@ def sub_command():
 #-------------------------------------------------------------------------------
 def init_ecm_db(instance_dir):
     log("Initializing database...")
-    run_python_cmd('manage.py syncdb --noinput --migrate', instance_dir)
+    run_python_cmd('manage.py makemigrations --noinput', instance_dir)
+    run_python_cmd('manage.py migrate --noinput', instance_dir)
     log('Database initialization successful.')
 
 #-------------------------------------------------------------------------------

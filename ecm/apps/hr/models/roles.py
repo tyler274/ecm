@@ -23,8 +23,10 @@ from django.db import models
 # from ecm.lib import bigintpatch
 from ecm.apps.corp.models import Hangar, Wallet, Corporation
 from ecm.apps.hr.models.member import Member
+from ecm.lib import bigint
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class RoleType(models.Model):
     """
     Category of Role
@@ -57,7 +59,8 @@ class RoleType(models.Model):
         else:
             return unicode(self.typeName)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Role(models.Model):
     """
     A Role gives a Member access to a specific resource of the Corporation.
@@ -157,7 +160,7 @@ class Role(models.Model):
         return "%s - %s" % (name, unicode(self.roleType))
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class RoleMembership(models.Model):
     """
     Represents the assignment of one Role to a Member.
@@ -186,7 +189,8 @@ class RoleMembership(models.Model):
                                                   unicode(self.role),
                                                   unicode(self.role.roleType))
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class RoleMemberDiff(models.Model):
     """
     Represents the change in the assignment of a Role to a Member
@@ -196,7 +200,8 @@ class RoleMemberDiff(models.Model):
         app_label = 'hr'
         ordering = ['date']
 
-    id = models.BigIntegerField(primary_key=True) #@ReservedAssignment
+    # Need a BigAutoField or proper BigIntegerField PK
+    id = bigint.BigAutoField(primary_key=True) #@ReservedAssignment
     member = models.ForeignKey(Member)
     role = models.ForeignKey(Role)
     # true if role is new for member, false if role was removed

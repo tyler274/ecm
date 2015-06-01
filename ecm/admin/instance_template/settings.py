@@ -260,7 +260,6 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'export',
     'captcha',
-    # 'south',
     'compressor',
 ]
 

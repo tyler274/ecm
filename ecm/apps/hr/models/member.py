@@ -30,6 +30,7 @@ from ecm.apps.corp.models import Corporation
 # from ecm.lib import bigintpatch, softfk
 from ecm.apps.hr import NAME as app_prefix
 from ecm.apps.eve.models import CelestialObject
+from ecm.lib import bigint
 
 # little trick to change the Users' absolute urls
 User.get_absolute_url = lambda self: '/hr/players/%s/' % self.id
@@ -204,7 +205,8 @@ class MemberDiff(models.Model):
         app_label = 'hr'
         ordering = ['date']
 
-    id = models.BigIntegerField(primary_key=True)  # @ReservedAssignment
+    # Need a BigAutoField or proper BigIntegerField PK
+    id = bigint.BigAutoField(primary_key=True)  # @ReservedAssignment
     member = models.ForeignKey(Member, related_name="diffs")
     name = models.CharField(max_length=100, db_index=True)
     nickname = models.CharField(max_length=256, db_index=True)
@@ -241,7 +243,8 @@ class MemberSession(models.Model):
     class Meta:
         app_label = 'hr'
 
-    id = models.BigIntegerField(primary_key=True)  # @ReservedAssignment
+    # Need a BigAutoField or proper BigIntegerField PK
+    id = bigint.BigAutoField(primary_key=True)  # @ReservedAssignment
     # TODO: somehow use FK's
     # member = models.ForeignKey(Member, related_name="diffs")
     # no defaults! forcing valid entries!
@@ -288,7 +291,7 @@ class Recruit(models.Model):
         app_label = 'hr'
 
     user = models.OneToOneField(User, related_name='user')
-    reference = models.ManyToManyField(User, null=True, blank=True, related_name='reference')
+    reference = models.ManyToManyField(User, blank=True, related_name='reference')
     recruiter = models.ForeignKey(User, null=True, blank=True, related_name='recruiter')
 
 

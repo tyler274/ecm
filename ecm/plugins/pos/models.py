@@ -24,8 +24,10 @@ from django.utils import timezone
 
 from ecm.plugins.pos import constants
 from ecm.apps.eve.models import CelestialObject, Type
+from ecm.lib import bigint
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class POS(models.Model):
     """
     usage_flags
@@ -76,7 +78,8 @@ class POS(models.Model):
 
     ACCESS_MASK = 3
 
-    item_id = models.BigIntegerField(primary_key=True)
+    # Need a BigAutoField or proper BigIntegerField PK
+    item_id = bigint.BigAutoField(primary_key=True)
 
     location_id = models.BigIntegerField(default=0)
     location = models.CharField(max_length=255, default="")

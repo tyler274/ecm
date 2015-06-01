@@ -23,20 +23,22 @@ from django.db.models import deletion
 from django.core.exceptions import ObjectDoesNotExist
 
 # from ecm.lib import bigintpatch, softfk
+from ecm.lib import bigint
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class Asset(models.Model):
 
     class Meta:
         get_latest_by = 'itemID'
 
-    itemID = models.BigIntegerField(primary_key=True) # supposed to be unique
+    # Need a BigAutoField or proper BigIntegerField PK
+    itemID = bigint.BigAutoField(primary_key=True)  # supposed to be unique
     solarSystemID = models.BigIntegerField()
     stationID = models.BigIntegerField()
-    hangarID = models.PositiveIntegerField() # hangar division
-    container1 = models.BigIntegerField(null=True, blank=True) # first container or ship
-    container2 = models.BigIntegerField(null=True, blank=True) # second container or ship
+    hangarID = models.PositiveIntegerField()  # hangar division
+    container1 = models.BigIntegerField(null=True, blank=True)  # first container or ship
+    container2 = models.BigIntegerField(null=True, blank=True)  # second container or ship
 
     # Switch to native django way
     # eve_type = softfk.SoftForeignKey(to='eve.Type')
@@ -100,7 +102,8 @@ class AssetDiff(models.Model):
     class Meta:
         get_latest_by = 'date'
 
-    id = models.BigIntegerField(primary_key=True) #@ReservedAssignment
+    # Need a BigAutoField or proper BigIntegerField PK
+    id = bigint.BigAutoField(primary_key=True) #@ReservedAssignment
     solarSystemID = models.BigIntegerField()
     stationID = models.BigIntegerField()
     hangarID = models.PositiveIntegerField() # hangar division
@@ -109,7 +112,7 @@ class AssetDiff(models.Model):
     quantity = models.IntegerField(default=0)
     date = models.DateTimeField(db_index=True)
     new = models.BooleanField()
-    flag = models.BigIntegerField() # used to determine the state or path of the asset
+    flag = models.BigIntegerField()  # used to determine the state or path of the asset
     volume = models.BigIntegerField(default=0)
     
     DATE_FIELD = 'date' # used for garbage collection
@@ -119,8 +122,7 @@ class AssetDiff(models.Model):
             return u'%s x%d' % (self.eve_type.typeName, self.quantity)
         except ObjectDoesNotExist:
             return unicode(id(self))
-        
-    
+
     def __getattr__(self, attr):
         from ecm.apps.eve.models import Type
         try:

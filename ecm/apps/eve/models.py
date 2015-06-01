@@ -22,8 +22,10 @@ from django.db import models
 
 from ecm.utils.tools import cached_property
 from ecm.apps.eve.formulas import apply_production_level, apply_material_level
+from ecm.lib import bigint
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Category(models.Model):
 
     class Meta:
@@ -46,7 +48,8 @@ class Category(models.Model):
     def __hash__(self):
         return self.categoryID
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Group(models.Model):
 
     class Meta:
@@ -81,7 +84,8 @@ class Group(models.Model):
     def __hash__(self):
         return self.groupID
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class ControlTowerResource(models.Model):
 
     class Meta:
@@ -271,7 +275,8 @@ class BlueprintType(models.Model):
         def __cmp__(self, other):
             return cmp(self.activityID, other.activityID)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class BlueprintReq(models.Model):
     """
     A material involved in the "execution" of a BpActivity.
@@ -423,7 +428,8 @@ class SkillReq(models.Model):
         ordering = ['item', 'skill']
     
     # we must add a forged primary key because django doesn't support multi-column primary keys
-    id = models.BigIntegerField(primary_key=True)   #@ReservedAssignment
+    # Need a BigAutoField or proper BigIntegerField PK
+    id = bigint.BigAutoField(primary_key=True)   #@ReservedAssignment
     item = models.ForeignKey('Type', related_name='skill_reqs')
     skill = models.ForeignKey('Type', related_name='+')
     required_level = models.SmallIntegerField()

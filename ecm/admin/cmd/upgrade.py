@@ -92,8 +92,10 @@ def migrate_ecm_db(instance_dir, upgrade_from_149=False):
 
     log('Database Migration successful.')
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 SERVER_NAME_REGEXP = re.compile('ServerName (.+)', re.IGNORECASE)
+
+
 def upgrade_instance_files(instance_dir, config):
     log('Upgrading instance config files & examples...')
 
@@ -161,7 +163,8 @@ def upgrade_instance_files(instance_dir, config):
     config.write(settings_fd)
     settings_fd.close()
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def run(command, global_options, options, args):
     if not args:
         command.parser.error('Missing instance directory.')

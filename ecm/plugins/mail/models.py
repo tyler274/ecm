@@ -23,25 +23,33 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from ecm.apps.hr.models.member import Member
+from ecm.lib import bigint
+
 
 class Mail(models.Model):
     class Meta:
         verbose_name = "Mail"
         verbose_name_plural = "Mails"
-    messageID = models.BigIntegerField(primary_key=True)
+
+    # Need a BigAutoField or proper BigIntegerField PK
+    messageID = bigint.BigAutoField(primary_key=True)
     sender = models.ForeignKey(Member, related_name='sent_mail')
     sentDate = models.DateTimeField()
     title = models.CharField(max_length=255, default="")
     body = models.TextField(default="")
+
     @property
     def url(self):
         return 'message/%d/' % self.messageID
+
     @property
     def permalink(self):
         return '<a href="%s" class="pos">%s</a>' % (self.url, self.title)
+
     @property
     def modal_link(self):
         return '<a href="%s" data-toggle="modal">%s</a>' % (self.url, self.title)
+
     def __unicode__(self):
         return unicode(self.title)
 
@@ -49,7 +57,9 @@ class MailingList(models.Model):
     class Meta:
         verbose_name = "Mailing List"
         verbose_name_plural = "Mailing Lists"
-    listID = models.BigIntegerField(primary_key=True)
+
+    # Need a BigAutoField or proper BigIntegerField PK
+    listID = bigint.BigAutoField(primary_key=True)
     displayName = models.CharField(max_length=255, default="")
 
 class Recipient(models.Model):
@@ -177,7 +187,9 @@ class Notification(models.Model):
         107: 'FacWar LP Disqualified Eventd',
         108: 'FacWar LP Disqualified Kill,',
     }
-    notificationID = models.BigIntegerField(primary_key=True)
+
+    # Need a BigAutoField or proper BigIntegerField PK
+    notificationID = bigint.BigAutoField(primary_key=True)
     senderID = models.BigIntegerField()
     recipient = models.ForeignKey(Member, related_name='notifications')
     typeID = models.IntegerField(choices=TYPE.items())

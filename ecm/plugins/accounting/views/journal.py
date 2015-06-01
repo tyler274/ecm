@@ -164,10 +164,14 @@ def journal_data(request):
 
     for entry in query:
 
-        try: owner1 = members.get(characterID=entry.ownerID1).permalink
-        except Member.DoesNotExist: owner1 = entry.ownerName1
-        try: owner2 = members.get(characterID=entry.ownerID2).permalink
-        except Member.DoesNotExist: owner2 = entry.ownerName2
+        try:
+            owner1 = members.get(characterID=entry.ownerID1).permalink
+        except Member.DoesNotExist:
+            owner1 = entry.ownerName1
+        try:
+            owner2 = members.get(characterID=entry.ownerID2).permalink
+        except Member.DoesNotExist:
+            owner2 = entry.ownerName2
 
         if entry.type_id == EntryType.BOUNTY_PRIZES:
             rats = [ s.split(':') for s in entry.reason.split(',') if ':' in s ]

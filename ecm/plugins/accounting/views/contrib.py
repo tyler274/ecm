@@ -58,9 +58,12 @@ def member_contrib(request):
     View function URL : '/accounting/contributions/'
     """
     from_date = JournalEntry.objects.all().aggregate(date=Min("date"))["date"]
-    if from_date is None: from_date = datetime.utcfromtimestamp(0)
+    if from_date is None:
+        from_date = datetime.utcfromtimestamp(0)
+
     to_date = JournalEntry.objects.all().aggregate(date=Max("date"))["date"]
-    if to_date is None: to_date = timezone.now()
+    if to_date is None:
+        to_date = timezone.now()
 
     query = JournalEntry.objects.filter(type__in=OPERATION_TYPES,
                                         date__gte=from_date, date__lte=to_date)

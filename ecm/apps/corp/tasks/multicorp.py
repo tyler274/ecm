@@ -86,4 +86,3 @@ def update_one_corp(corp):
     LOG.debug('Ending secure session with %r...' % corp.ecm_url)
     # finally destroy our session info to be sure nobody will steal it :)
     client.get(urlparse.urljoin(corp.ecm_url, '/corp/auth/endsession/'))
-    
