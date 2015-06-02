@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import ecm.lib.bigint
 import django.db.models.deletion
 
 
@@ -15,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Asset',
             fields=[
-                ('itemID', models.BigIntegerField(serialize=False, primary_key=True)),
+                ('itemID', ecm.lib.bigint.BigAutoField(serialize=False, primary_key=True)),
                 ('solarSystemID', models.BigIntegerField()),
                 ('stationID', models.BigIntegerField()),
                 ('hangarID', models.PositiveIntegerField()),
@@ -38,7 +39,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AssetDiff',
             fields=[
-                ('id', models.BigIntegerField(serialize=False, primary_key=True)),
+                ('id', ecm.lib.bigint.BigAutoField(serialize=False, primary_key=True)),
                 ('solarSystemID', models.BigIntegerField()),
                 ('stationID', models.BigIntegerField()),
                 ('hangarID', models.PositiveIntegerField()),

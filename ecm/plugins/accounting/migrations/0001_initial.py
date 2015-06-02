@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import ecm.lib.bigint
 
 
 class Migration(migrations.Migration):
@@ -61,23 +62,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='EntryType',
             fields=[
-                ('refTypeID', models.PositiveIntegerField(serialize=False, primary_key=True)),
+                ('refTypeID', models.PositiveIntegerField(serialize=False, primary_key=True, db_index=True)),
                 ('refTypeName', models.CharField(max_length=64)),
             ],
         ),
         migrations.CreateModel(
             name='JournalEntry',
             fields=[
-                ('id', models.BigIntegerField(serialize=False, primary_key=True)),
+                ('id', ecm.lib.bigint.BigAutoField(db_index=True, serialize=False, primary_key=True)),
                 ('refID', models.BigIntegerField()),
-                ('date', models.DateTimeField()),
+                ('date', models.DateTimeField(db_index=True)),
                 ('ownerName1', models.CharField(max_length=128)),
                 ('ownerID1', models.BigIntegerField()),
                 ('ownerName2', models.CharField(max_length=128)),
                 ('ownerID2', models.BigIntegerField()),
                 ('argName1', models.CharField(max_length=128)),
                 ('argID1', models.BigIntegerField()),
-                ('amount', models.FloatField()),
+                ('amount', models.FloatField(db_index=True)),
                 ('balance', models.FloatField()),
                 ('reason', models.CharField(max_length=512)),
                 ('type', models.ForeignKey(to='accounting.EntryType')),
@@ -106,7 +107,7 @@ class Migration(migrations.Migration):
                 ('price', models.FloatField()),
                 ('bid', models.BooleanField(default=False)),
                 ('issued', models.DateTimeField()),
-                ('accountKey', models.ForeignKey(related_name='market_orders', to='corp.Wallet')),
+                ('accountKey', models.ForeignKey(related_name='market_orders', to='corp.Wallet', db_constraint=False)),
             ],
             options={
                 'ordering': ['orderID'],

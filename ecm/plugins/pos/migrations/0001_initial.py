@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import ecm.lib.bigint
 from django.conf import settings
 
 
@@ -30,7 +31,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='POS',
             fields=[
-                ('item_id', models.BigIntegerField(serialize=False, primary_key=True)),
+                ('item_id', ecm.lib.bigint.BigAutoField(serialize=False, primary_key=True)),
                 ('location_id', models.BigIntegerField(default=0)),
                 ('location', models.CharField(default=b'', max_length=255)),
                 ('moon_id', models.BigIntegerField(default=0)),

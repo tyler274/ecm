@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import ecm.lib.bigint
 
 
 class Migration(migrations.Migration):
@@ -123,7 +124,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SkillReq',
             fields=[
-                ('id', models.BigIntegerField(serialize=False, primary_key=True)),
+                ('id', ecm.lib.bigint.BigAutoField(serialize=False, primary_key=True)),
                 ('required_level', models.SmallIntegerField()),
             ],
             options={
