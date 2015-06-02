@@ -74,13 +74,14 @@ def update():
 
     for member in membersApi.members:
         m = parseOneMember(member, my_corp)
-        session = MemberSession(character_id = m.characterID,
-                                session_begin = m.lastLogin,
-                                session_end = m.lastLogoff,
-                                session_seconds = (member.logoffDateTime-member.logonDateTime).seconds)
+        session = MemberSession(character_id=m.characterID,
+                                session_begin=m.lastLogin,
+                                session_end=m.lastLogoff,
+                                session_seconds=(member.logoffDateTime - member.logonDateTime).seconds
+                                )
         
-        dbsession = MemberSession.objects.filter(character_id = m.characterID,
-                                                 session_begin = m.lastLogin)
+        dbsession = MemberSession.objects.filter(character_id=m.characterID,
+                                                 session_begin=m.lastLogin)
         if len(dbsession) == 0:
             session.save()
         newMembers[m] = m
@@ -130,11 +131,10 @@ def update():
     UpdateDate.mark_updated(model=Member, date=currentTime)
 
 
-
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def parseOneMember(member, my_corp):
     try:
-        location = CelestialObject.objects.get(itemID = member.locationID).itemName
+        location = CelestialObject.objects.get(itemID=member.locationID).itemName
     except CelestialObject.DoesNotExist:
         location = str(member.locationID)
     try:
