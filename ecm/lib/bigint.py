@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 # Because Django is retarded and can't do auto incrementing 64bit ints by itself.
+# Credit to Sentry for the implementation
 
 
 class BigAutoField(models.AutoField):
@@ -19,7 +20,7 @@ class BigAutoField(models.AutoField):
                 return "NUMBER(19)"
             elif 'postgres' in engine:
                 return "bigserial"
-            # SQLite doesnt actually support bigints with auto incr
+            # SQLite doesnt actually support bigints with auto incrementing
             elif 'sqlite' in engine:
                 return 'integer'
             else:
