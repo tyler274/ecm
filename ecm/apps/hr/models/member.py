@@ -250,8 +250,8 @@ class MemberSession(models.Model):
     # no defaults! forcing valid entries!
     character_id = models.BigIntegerField(db_index=True)
     session_begin = models.DateTimeField(db_index=True)
-    session_end = models.DateTimeField()
-    session_seconds = models.BigIntegerField(default=0)
+    session_end = models.DateTimeField(db_index=True)
+    session_seconds = models.BigIntegerField(default=0, db_index=True)
 
     DATE_FIELD = 'session_begin'  # used for garbage collection
 

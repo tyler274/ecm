@@ -25,6 +25,7 @@ from django.db.models.aggregates import Avg
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext as Ctx
 from django.utils import timezone
+from django.views.decorators.cache import cache_page
 
 from ecm.utils import _json as json
 from ecm.apps.eve.models import CelestialObject
@@ -36,8 +37,9 @@ from ecm.apps.hr.models.member import MemberSession
 from ecm.apps.common.models import ColorThreshold, UserAPIKey
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
+@cache_page(60 * 5)
 def dashboard(request):
     
     dailyplaytimes = []
@@ -48,12 +50,12 @@ def dashboard(request):
         start = now - timedelta(day+1)
         end = now - timedelta(day)
         
-        if average_playtime(start,end)['len'] == None:
+        if average_playtime(start, end)['len'] == None:
             time = 0.0
         else:
-            time = round((average_playtime(start,end)['len']/3600),2)
+            time = round((average_playtime(start, end)['len']/3600), 2)
         date = start.strftime("%a %b %d")
-        online  = members_online(start, end)
+        online = members_online(start, end)
         dataset = {'date' : date, 'time' : time} 
         dailyplaytimes.append(dataset)
         dataset = {'date' : date, 'online' : online}

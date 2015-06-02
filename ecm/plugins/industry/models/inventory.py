@@ -24,7 +24,7 @@ from django.db import models
 from ecm.apps.eve.models import Type
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class SupplySource(models.Model):
 
     class Meta:
@@ -36,7 +36,7 @@ class SupplySource(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class Supply(models.Model):
 
     class Meta:
@@ -82,7 +82,7 @@ class Supply(models.Model):
         except AttributeError:
             return models.Model.__getattribute__(self, attrName)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class PriceHistory(models.Model):
 
     class Meta:
