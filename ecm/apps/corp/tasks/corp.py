@@ -26,7 +26,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.db import transaction
 
-from ecm.utils import crypto
+from ecm.utils import cryptoECM
 from ecm.apps.common.models import UpdateDate
 from ecm.apps.corp.models import Corporation, Hangar, Wallet, CorpHangar, CorpWallet, Alliance
 from ecm.apps.common import api
@@ -136,9 +136,9 @@ def update_corp_info(corpApi, currentTime):
     if not (corp.private_key and corp.public_key and corp.key_fingerprint):
         # as this is the first time, we must generate the RSA keypair of our own corp
         LOG.debug('Generating RSA key pair...')
-        corp.private_key = crypto.generate_rsa_keypair()
-        corp.public_key = crypto.extract_public_key(corp.private_key)
-        corp.key_fingerprint = crypto.key_fingerprint(corp.public_key) 
+        corp.private_key = cryptoECM.generate_rsa_keypair()
+        corp.public_key = cryptoECM.extract_public_key(corp.private_key)
+        corp.key_fingerprint = cryptoECM.key_fingerprint(corp.public_key)
         LOG.info('Generated RSA key pair for corporation ID %d.' % corpApi.corporationID)
 
     corp.save()
@@ -153,15 +153,21 @@ def update_corp_info(corpApi, currentTime):
 def update_hangar_divisions(corpApi, currentTime):
     LOG.debug("HANGAR DIVISIONS:")
     my_corp = Corporation.objects.mine()
-    hangars = CorpHangar.objects.filter(corp=my_corp)
+    corp_hangars = CorpHangar.objects.filter(corp=my_corp)
     for hangarDiv in corpApi.divisions:
-        h_id = hangarDiv.accountKey
-        h_name = hangarDiv.description
+        corp_hangar_id = hangarDiv.accountKey
+        corp_hangar_name = hangarDiv.description
         try:
-            h = hangars.get(hangar_id=h_id)
-            h.name = h_name
+            h = corp_hangars.get(hangar_id=corp_hangar_id)
+            h.name = corp_hangar_name
         except CorpHangar.DoesNotExist:
-            h = CorpHangar(corp=my_corp, hangar_id=h_id, name=h_name)
+            try:
+                Hangar.objects.get(hangarID=corp_hangar_id)
+            except Hangar.DoesNotExist:
+                new_hangar = Hangar(hangarID=corp_hangar_id)
+                new_hangar.save()
+
+            h = CorpHangar(corp=my_corp, hangar_id=corp_hangar_id, name=corp_hangar_name)
         LOG.debug("  %s [%s]", h.name, h.hangar_id)
         h.save()
     # we store the update time of the table
@@ -175,13 +181,19 @@ def update_wallet_divisions(corpApi, currentTime):
     my_corp = Corporation.objects.mine()
     wallets = CorpWallet.objects.filter(corp=my_corp)
     for walletDiv in corpApi.walletDivisions:
-        w_id = walletDiv.accountKey
-        w_name = walletDiv.description
+        corp_wallet_id = walletDiv.accountKey
+        corp_wallet_name = walletDiv.description
         try:
-            w = wallets.get(wallet_id=w_id)
-            w.name = w_name
+            w = wallets.get(wallet_id=corp_wallet_id)
+            w.name = corp_wallet_name
         except CorpWallet.DoesNotExist:
-            w = CorpWallet(corp=my_corp, wallet_id=w_id, name=w_name)
+            try:
+                Wallet.objects.get(walletID=corp_wallet_id)
+            except Wallet.DoesNotExist:
+                new_wallet = Wallet(walletID=corp_wallet_id)
+                new_wallet.save()
+
+            w = CorpWallet(corp=my_corp, wallet_id=corp_wallet_id, name=corp_wallet_name)
         LOG.debug("  %s [%s]", w.name, w.wallet_id)
         w.save()
     # we store the update time of the table

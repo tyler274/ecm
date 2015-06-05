@@ -27,7 +27,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseBadRequest
 
 from ecm.apps.corp.models import Corporation
-from ecm.utils import crypto
+from ecm.utils import cryptoECM
 from ecm.utils import _json as json
 
 LOG = logging.getLogger(__name__)
@@ -83,9 +83,9 @@ def get_challenge(request):
     
     # we store the key_fingerprint to tie this session to the TrustedCorp 
     request.session[AUTH_FINGERPRINT] = key_fingerprint
-    request.session[AUTH_SECRET] = crypto.generate_secret()
+    request.session[AUTH_SECRET] = cryptoECM.generate_secret()
     
-    encrypted_secret = crypto.rsa_encrypt(corp.public_key, request.session[AUTH_SECRET])
+    encrypted_secret = cryptoECM.rsa_encrypt(corp.public_key, request.session[AUTH_SECRET])
     
     return HttpResponse(encrypted_secret)  
 
@@ -99,7 +99,7 @@ def post_response(request):
     if key_fingerprint is None or secret is None:
         return HttpResponse(status=http.UNAUTHORIZED)
     
-    given_secret = crypto.rsa_decrypt(Corporation.objects.mine().private_key, request.body)
+    given_secret = cryptoECM.rsa_decrypt(Corporation.objects.mine().private_key, request.body)
     
     if given_secret == secret:
         # authentication successful!
@@ -171,6 +171,6 @@ def encrypted_response(request, data, compress=False):
         mime = 'application/gzip-compressed'
     else:
         mime = 'application/octet-stream'
-    encrypted_data = crypto.aes_encrypt(request.session[AUTH_SECRET], data)
+    encrypted_data = cryptoECM.aes_encrypt(request.session[AUTH_SECRET], data)
     return HttpResponse(encrypted_data, content_type=mime)
 

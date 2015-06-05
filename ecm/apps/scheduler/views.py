@@ -39,7 +39,7 @@ from ecm.apps.scheduler.models import ScheduledTask
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @basic_auth_required(username=Setting.get('common_cron_username'))
 def trigger_scheduler(request):
     now = timezone.now()
@@ -57,12 +57,12 @@ def trigger_scheduler(request):
     else:
         return HttpResponse(status=http.NOT_MODIFIED)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 def task_list(request):
     return render_to_response('ecm/scheduler/tasks.html', Ctx(request))
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 FUNCTIONS = []
 for app in apps.LIST:
     FUNCTIONS += [ t['function'] for t in app.tasks ]
@@ -94,8 +94,7 @@ def task_list_data(request):
     return datatable_ajax_data(tasks, params.sEcho)
 
 
-
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 def launch_task(request, task_id):
     try:

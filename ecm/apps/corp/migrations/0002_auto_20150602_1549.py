@@ -12,6 +12,7 @@ from django.core.management import call_command
 #         return sql
 
 def load_corp_data(apps, schema_editor):
+    call_command("loaddata", "initial_data.json")
     call_command("loaddata", "0009_mercenary_wallet_data.json")
 
     # cursor = connection.cursor()

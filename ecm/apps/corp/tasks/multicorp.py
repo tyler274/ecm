@@ -23,7 +23,7 @@ import logging
 import urlparse
 
 from ecm.utils.http import HttpClient
-from ecm.utils import crypto 
+from ecm.utils import cryptoECM
 from ecm.apps.corp.models import Corporation, SharedData
 from ecm.utils import _json as json
 
@@ -50,9 +50,9 @@ def update_one_corp(corp):
     cipher_txt_in = response.read()
     
     # we decrypt the response with our private key
-    session_secret = crypto.rsa_decrypt(my_corp.private_key, cipher_txt_in)
+    session_secret = cryptoECM.rsa_decrypt(my_corp.private_key, cipher_txt_in)
     # and encrypt it back with the corp's public key
-    cipher_txt_out = crypto.rsa_encrypt(corp.public_key, session_secret)
+    cipher_txt_out = cryptoECM.rsa_encrypt(corp.public_key, session_secret)
     
     # then send it to the server
     client.post(auth_url, cipher_txt_out)
@@ -60,7 +60,7 @@ def update_one_corp(corp):
     LOG.debug('Fetching which data %r is sharing with us...' % corp)
     # now we fetch the urls we're allowed to pull from this corporation
     response = client.get(urlparse.urljoin(corp.ecm_url, '/corp/share/allowed/'))
-    data = crypto.aes_decrypt(session_secret, response.read())
+    data = cryptoECM.aes_decrypt(session_secret, response.read())
     allowed_urls = json.loads(data)
 
     if not allowed_urls:
@@ -72,7 +72,7 @@ def update_one_corp(corp):
             LOG.debug('Fetching shared data %r...' % url)
             response = client.get(urlparse.urljoin(corp.ecm_url, shared_data.url))
             
-            raw_data = crypto.aes_decrypt(session_secret, response.read())
+            raw_data = cryptoECM.aes_decrypt(session_secret, response.read())
             
             if response.info().getheader('content-type') == 'application/gzip-compressed':
                 raw_data = zlib.decompress(raw_data)
