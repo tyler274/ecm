@@ -68,12 +68,12 @@ function membersStateLoadParams (oSettings, oData) {
     if ('show_ships' in oData) {
     	var buttons = $('#ships_selector button');
     	SHOW_SHIPS = oData.show_ships;
-        for (var i = 0; i < buttons.length; i++) {
-            if (buttons[i].id == SHOW_SHIPS) {
-                $(buttons[i]).addClass('active');
-            } else {
-                $(buttons[i]).removeClass('active');
-            }
+        if (buttons[0].id == SHOW_SHIPS) {
+            $(buttons[0]).attr('aria-pressed', 'true');
+            $(buttons[1]).attr('aria-pressed', 'false');
+        } else {
+            $(buttons[0]).attr('aria-pressed', 'true');
+            $(buttons[1]).attr('aria-pressed', 'false');
         }
     }
     if ('corp' in oData) {
@@ -87,6 +87,13 @@ $(document).ready(function () {
     	event.preventDefault();
     	SHOW_SHIPS = this.id;
     	$('#members_table').dataTable().fnDraw();
+        if ($('#all').id == SHOW_SHIPS) {
+            $('#all').attr('aria-pressed', 'true');
+            $('#supers').attr('aria-pressed', 'false');
+        } else {
+            $('#supers').attr('aria-pressed', 'true');
+            $('#all').attr('aria-pressed', 'false');
+        }
 	});
     
     $('#corp_selector').on('change', function () {

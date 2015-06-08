@@ -40,7 +40,7 @@
 
 <div class="alert alert-error" id="reject-form" >
   <form method="post" action="/industry/orders/{{order.id}}/reject/" class="form-inline">{%csrf_token%}
-    <input class="span8" name="comment" id="reject-comment" value="" placeholder="Please explain why you are rejecting..."/>
+    <input class="col-md-8" name="comment" id="reject-comment" value="" placeholder="Please explain why you are rejecting..."/>
     <button type="submit" class="btn btn-danger btn-small" disabled="disabled"><i class="icon-exclamation-sign icon-white"></i>{% trans 'Reject Order' %}</button>
     <button id="abort-reject" class="btn btn-small"><i class="icon-remove"></i>{% trans 'Abort' %}</button>
   </form>
@@ -50,7 +50,7 @@
 <hr>
 
 <div class="row-fluid">
-  <div class="span3">
+  <div class="col-md-3">
     <h2>{% trans 'Order details' %}</h2>
     <dl class="table">
       <dt>{% trans 'Total Quote' %}</dt>
@@ -69,7 +69,7 @@
         <dd>{{order.delivery_date|ecm_datetime}}</dd>
     </dl>
   </div>
-  <div class="span9 tabbable">
+  <div class="col-md-9 tabbable">
     <ul class="nav nav-tabs">
       <li class="active"><a href="#items-tab" data-toggle="tab">{% trans 'Ordered Items' %}</a></li>
       <li><a href="#materials-tab" data-toggle="tab">{% trans 'Bill Of Materials' %}</a></li>
@@ -99,7 +99,7 @@
         </table>
       </div>
       <div class="tab-pane" id="materials-tab">
-        <table class="table table-striped table-bordered table-condensed span4">
+        <table class="table table-striped table-bordered table-condensed col-md-4">
           <thead>
             <tr>
               <th>{% trans 'Material' %}</th>
@@ -129,7 +129,7 @@
 
 <form method="post" action="/industry/orders/{{order.id}}/comment/" class="form-inline" id="add-comment-form">
 {%csrf_token%}
-    <input class="span8" name="comment" id="new-comment" value="" placeholder="Please type some text..."/>
+    <input class="col-md-8" name="comment" id="new-comment" value="" placeholder="Please type some text..."/>
     <button type="submit" class="btn btn-small" disabled="disabled"><i class="icon-comment"></i>{% trans 'Add comment' %}</button>
 </form>
 

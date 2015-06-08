@@ -39,7 +39,7 @@ from ecm.apps.common.models import ColorThreshold, UserAPIKey
 
 # ------------------------------------------------------------------------------
 @check_user_access()
-@cache_page(60 * 5)
+@cache_page(60 * 60)
 def dashboard(request):
     
     dailyplaytimes = []

@@ -60,7 +60,7 @@
         <td><img src="//image.eveonline.com/Type/{{row.catalog_entry.typeID}}_32.png" /></td>
         <td><strong>{{row.catalog_entry.typeName}}</strong></td>
         <td class="right price" price="{{row.quote}}">{%if row.quote %}{{row.quote|ecm_price}} ISK{%else%}N/A{%endif%}</td>
-        <td><input class="span1" type="text" name="{{row.catalog_entry.typeID}}" value="{{row.quantity}}" /></td>
+        <td><input class="col-md-1" type="text" name="{{row.catalog_entry.typeID}}" value="{{row.quantity}}" /></td>
         <td><a class="btn btn-small btn-danger"><i class="icon-trash icon-white"></i></a></td>
       </tr>
       {% empty %}
@@ -96,7 +96,7 @@
   </div>
   <div class="modal-footer form-inline">
     <label for="eft-quantity">{% trans 'Quantity' %}</label>
-    <input id="eft-quantity" name="eft-quantity" class="span2" value="1"/>
+    <input id="eft-quantity" name="eft-quantity" class="col-md-2" value="1"/>
     <a id="eft-submit" class="btn btn-primary" data-dismiss="modal">{% trans 'Import EFT Fitting' %}</a>
   </div>
 </div>
@@ -124,7 +124,7 @@ NEW_ITEM =
  '<td><img src="//image.eveonline.com/Type/%typeID_32.png" /></td>' +
  '<td><strong>%typeName</strong></td>' +
  '<td class="right price" price="%price">%formattedPrice</td>' +
- '<td><input class="span1" type="text" name="%typeID" value="%quantity" /></td>' +
+ '<td><input class="col-md-1" type="text" name="%typeID" value="%quantity" /></td>' +
  '<td><a class="btn btn-small btn-danger"><i class="icon-trash icon-white"></i></a></td>' +
 '</tr>';
 EMPTY = '<tr id="empty"><td colspan="5" class="order_cart_empty" >Your shopping cart is empty.</td></tr>';

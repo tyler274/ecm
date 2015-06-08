@@ -11,7 +11,7 @@
 	{% csrf_token %}
 	
 	<label>{% trans 'MOTD Text' %}</label>
-	<textarea rows="10" class="span5 code" name="message">{{motd.message}}</textarea>
+	<textarea rows="10" class="col-md-5 code" name="message">{{motd.message}}</textarea>
 	<br>
 	<label>{% trans 'Select Markup' %}</label>
 	<select name="markup">

@@ -19,7 +19,7 @@
 
 <div class="tab-content">
 	<div class="tab-pane active" id="summary">
-		<div class="span4">
+		<div class="col-md-4">
 			<table class="table table-condensed table-striped" id="cashflow_table">
 			<!-- HEADER -->
 			  <thead>
@@ -48,7 +48,7 @@
 		<div id="chart_balances"></div>
 	</div>
 	<div class="tab-pane" id="income">
-		<div class="span7">
+		<div class="col-md-7">
 			<table class="table table-condensed table-striped" id="income_table">
 			<!-- HEADER -->
 			  <thead>
@@ -74,11 +74,11 @@
 			</tfoot>
 			</table>
 		</div>
-		<div id="chart_income" class="span4"></div>
-		<div id="chart_incomes" class="span11"></div>
+		<div id="chart_income" class="col-md-7"></div>
+		<div id="chart_incomes" class="col-md-11"></div>
 	</div>
 	<div class="tab-pane" id="expenditure">
-		<div class="span7">
+		<div class="col-md-7">
 			<table class="table table-condensed table-striped" id="expenditure_table">
 			<!-- HEADER -->
 			  <thead>
@@ -104,12 +104,12 @@
 			</tfoot>
 			</table>
 		</div>
-		<div id="chart_expenditure" class="span4"></div>
-		<div id="chart_expenditures" class="span11"></div>
+		<div id="chart_expenditure" class="col-md-4"></div>
+		<div id="chart_expenditures" class="col-md-11"></div>
 	</div>
 	{% for custom_report in custom_reports %}
 	<div class="tab-pane" id="{{ custom_report.name|slugify }}">
-		<div class="span7">
+		<div class="col-md-7">
 			<table class="table table-condensed table-striped" id="{{ custom_report.name|slugify }}-table">
 			<!-- HEADER -->
 			  <thead>
@@ -134,7 +134,7 @@
 			</tfoot>
 			</table>
 		</div>
-		<!--<div id="chart_expenditure" class="span4"></div>
+		<!--<div id="chart_expenditure" class="col-md-4"></div>
 		<div id="chart_expenditures" class="span11"></div>-->
 	</div>
 	{% endfor %}

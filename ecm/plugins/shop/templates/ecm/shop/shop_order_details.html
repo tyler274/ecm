@@ -39,7 +39,7 @@
 
 <div class="alert alert-error" id="cancel-form" >
   <form method="post" action="/shop/orders/{{order.id}}/cancel/" class="form-inline">{%csrf_token%}
-      <input class="span8" name="comment" id="cancel-comment" value="" placeholder="Please explain why you are cancelling..."/>
+      <input class="col-md-8" name="comment" id="cancel-comment" value="" placeholder="Please explain why you are cancelling..."/>
       <button type="submit" class="btn btn-danger btn-small" disabled="disabled"><i class="icon-exclamation-sign icon-white"></i>{% trans 'Cancel Order' %}</button>
       <button id="abort-cancel" class="btn btn-small"><i class="icon-remove"></i>{% trans 'Abort' %}</button>
   </form>
@@ -49,7 +49,7 @@
 <hr>
 
 <div class="row-fluid">
-  <div class="span4">
+  <div class="col-md-4">
     <h2>Order details</h2>
     <dl class="table">
       <dt>{% trans 'Total Quote' %}</dt><dd><h4>{%if order.quote == 0.0%}N/A{%else%}{{order.quote|ecm_price}} ISK{%endif%}</h4></dd>
@@ -60,7 +60,7 @@
       <dt>{% trans 'Delivery Date' %}</dt><dd>{{order.delivery_date|ecm_datetime}}</dd>
     </dl>
   </div>
-  <div class="span8">
+  <div class="col-md-8">
     <h2>{% trans 'Ordered items' %}</h2>
     <table class="table table-striped table-bordered table-condensed table-centered">
       <thead>
@@ -91,7 +91,7 @@
 
 <form method="post" action="/shop/orders/{{order.id}}/comment/" class="form-inline" id="add-comment-form">
 {%csrf_token%}
-    <input class="span8" name="comment" id="new-comment" value="" placeholder="{% trans 'Please type some text...' %}"/>
+    <input class="col-md-8" name="comment" id="new-comment" value="" placeholder="{% trans 'Please type some text...' %}"/>
     <button type="submit" class="btn btn-small" disabled="disabled"><i class="icon-comment"></i>{% trans 'Add comment' %}</button>
 </form>
 

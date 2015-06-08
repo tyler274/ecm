@@ -45,16 +45,17 @@ HTML = 'text/html'
 
 DATE_PATTERN = "%Y-%m-%d_%H-%M-%S"
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 DATATABLES_DEFAULTS = {
-    'sPaginationType': 'bootstrap',
+    'sPaginationType': 'full_numbers',
+    'responsive': True,
     'bProcessing': True,
     'bServerSide': True,
     'bAutoWidth': False,
     'iDisplayLength': 25,
     'bStateSave': True,
     'iCookieDuration': 60 * 60, # 1 hour
-    'sDom': '<"row-fluid"<"span5"l><"span7"p>>rt<"row-fluid"<"span5"i><"span7"p>>',
+    'sDom': '<"row-fluid"<"col-md-5"l><"col-md-7"p>>rt<"row-fluid"<"col-md-5"i><"col-md-7"p>>',
     'fnStateLoadParams': 'function (oSettings, oData) { oData.sFilter = $("#search_text").val(); }',
     'fnStateSaveParams': 'function (oSettings, oData) { $("#search_text").val(oData.sFilter); return true; }',
     'oLanguage': {

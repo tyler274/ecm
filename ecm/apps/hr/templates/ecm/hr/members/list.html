@@ -18,7 +18,7 @@
     </div>
     <span class="label label-info">{% trans 'Display' %}</span>
     <div class="btn-group" data-toggle="buttons-radio" id="ships_selector">
-      <button class="btn btn-small btn-info active" id="all">{% trans 'All Ships' %}</button>
+      <button class="btn btn-small btn-info" id="all">{% trans 'All Ships' %}</button>
       <button class="btn btn-small btn-info" id="supers">{% trans 'Supers Only' %}</button>
     </div>
     <div class="pull-right">
@@ -45,7 +45,7 @@
              defaults=datatables_defaults 
              sAjaxSource='/hr/members/data/' 
              sCookiePrefix='ecm_members_table_' 
-             sDom='<"row-fluid"<"span5"l><"span7"C>>rt<"row-fluid"<"span5"i><"span7"p>>' 
+             sDom='<"row-fluid"<"col-md-5"l><"col-md-7"C>>rt<"row-fluid"<"col-md-5"i><"col-md-7"p>>'
              fnRowCallback='membersRowCallback' 
              fnServerParams='membersServerParams' 
              fnStateSaveParams='membersStateSaveParams' 

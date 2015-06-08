@@ -17,10 +17,10 @@
 <h1>{{item.typeName}}</h1>
 </div>
 <div class="row-fluid">
-  <div class="span1">
+  <div class="col-md-1">
     <img src="//image.eveonline.com/Type/{{item.typeID}}_64.png" />
   </div>
-  <div class="span3">
+  <div class="col-md-3">
   <dl class="table">
     <dt>{% trans 'Available in catalog' %}</dt>
       <dd><input type="checkbox" id="availability_checkbox" {% if item.is_available %}checked{% endif %}/></dd>

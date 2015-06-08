@@ -103,7 +103,7 @@ def edit_apikey(request):
 class DirectorApiKeyForm(forms.Form):
     keyID = forms.IntegerField(label=_('API Key ID'))
     vCode = forms.CharField(label=_('Verification Code'),
-                            widget=forms.TextInput(attrs={'size':'100'}))
+                            widget=forms.TextInput(attrs={'size':'50'}))
 
     def clean(self):
         cleaned_data = self.cleaned_data
