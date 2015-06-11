@@ -18,7 +18,7 @@
 __date__ = "2011 4 17"
 __author__ = "diabeteman"
 
-from django.http import HttpResponseBadRequest, HttpResponse, Http404
+from django.http import HttpResponseBadRequest, HttpResponse, Http404, JsonResponse
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, get_object_or_404
 from django.db.models.aggregates import Count
@@ -178,5 +178,5 @@ def player_details_data(request, player_id):
         "aaData" : members
     }
 
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)
 

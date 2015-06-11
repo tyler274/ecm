@@ -20,7 +20,7 @@ __author__ = "diabeteman"
 
 
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db.models.aggregates import Count
 from django.contrib.auth.models import User
 
@@ -51,7 +51,7 @@ def players(request):
             'characters': characters,
             'bindings': bindings
         })
-    return HttpResponse(json.dumps(members))
+    return JsonResponse(members, safe=False)
 
 #------------------------------------------------------------------------------
 @basic_auth_required(username=Setting.get('common_cron_username'))
@@ -83,7 +83,7 @@ def user_bindings(request, app_name):
             'groups': list(groups),
             'characters': characters,
         })
-    return HttpResponse(json.dumps(members))
+    return JsonResponse(members, safe=False)
 
 #------------------------------------------------------------------------------
 @basic_auth_required(username=Setting.get('common_cron_username'))
@@ -104,4 +104,4 @@ def group_bindings(request, app_name):
     for group_id, members in groups.items():
         json_data.append({'group' : group_id, 'members' : list(members)})
 
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)

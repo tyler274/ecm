@@ -23,7 +23,7 @@ from datetime import datetime
 
 from django.db.models import Q
 from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseRedirect,\
-    Http404
+    Http404, JsonResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
 from django.utils.timezone import utc
@@ -93,7 +93,7 @@ def timers_data(request):
         timers = timers.order_by(sort_order)
 
     if not params.display_all:
-        timers =  timers.filter(timers__gte=datetime.utcnow())
+        timers = timers.filter(timers__gte=datetime.utcnow())
 
     # Build result list for formatted/labeled data
     timer_list = []
@@ -118,7 +118,7 @@ def timers_data(request):
         "iTotalDisplayRecords" : filtered_entries,
         "aaData" : timer_list,
     }
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)
 
 @check_user_access()
 def add_timer(request):

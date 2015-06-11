@@ -23,7 +23,7 @@ import logging
 from django.db.models import Q
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
 from django.db.models.aggregates import Count
 from django.template.context import RequestContext as Ctx
 from django.utils.translation import ugettext as tr
@@ -222,4 +222,4 @@ def is_cyno_alt(request, characterID):
         member.save()
         logger.info('"%s" Changed cyno alt status of "%s" -> %s' % (request.user, member, is_cyno_alt))
 
-    return HttpResponse(json.dumps(member.is_cyno_alt))
+    return JsonResponse(member.is_cyno_alt, safe=False)

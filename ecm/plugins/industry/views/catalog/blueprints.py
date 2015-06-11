@@ -21,7 +21,7 @@ __author__ = 'diabeteman'
 
 import logging
 
-from django.http import Http404, HttpResponseBadRequest, HttpResponse
+from django.http import Http404, HttpResponseBadRequest, HttpResponse, JsonResponse
 from django.template.context import RequestContext as Ctx
 from django.shortcuts import get_object_or_404, render_to_response
 from django.core.exceptions import ValidationError
@@ -211,4 +211,4 @@ def info(request, attr):
         except ValidationError as e:
             return HttpResponseBadRequest(str(e))
 
-    return HttpResponse(json.dumps(getattr(bp, attr)))
+    return JsonResponse(getattr(bp, attr), safe=False)

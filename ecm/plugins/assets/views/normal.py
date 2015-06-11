@@ -23,7 +23,7 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext as Ctx
 from django.template.defaultfilters import pluralize
 from django.views.decorators.cache import cache_page
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db import connection
 from django.db.models.query_utils import Q
 
@@ -80,10 +80,7 @@ def root(request):
     return render_to_response('ecm/assets/assets.html', data, Ctx(request))
 
 
-
-
-#------------------------------------------------------------------------------
-
+# ------------------------------------------------------------------------------
 @check_user_access()
 def get_systems_data(request):
 
@@ -142,10 +139,10 @@ def get_systems_data(request):
             'state' : 'closed'
         })
     cursor.close()
-    return HttpResponse(json.dumps(jstree_data))
+    return JsonResponse(jstree_data, safe=False)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 def get_celestial_objects_data(request, solarSystemID):
     solarSystemID = int(solarSystemID)
@@ -204,9 +201,9 @@ def get_celestial_objects_data(request, solarSystemID):
             'state' : 'closed'
         })
     cursor.close()
-    return HttpResponse(json.dumps(jstree_data))
+    return JsonResponse(jstree_data, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 def get_stations_data(request, solarSystemID, closest_obj_id):
     solarSystemID = int(solarSystemID)
@@ -276,11 +273,11 @@ def get_stations_data(request, solarSystemID, closest_obj_id):
             'state' : 'closed'
         })
     cursor.close()
-    return HttpResponse(json.dumps(jstree_data))
+    return JsonResponse(jstree_data, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
-@cache_page(3 * 60 * 60) # 3 hours cache
+@cache_page(3 * 60 * 60)  # 3 hours cache
 def get_hangars_data(request, solarSystemID, closest_obj_id, stationID):
     solarSystemID = int(solarSystemID)
     closest_obj_id = int(closest_obj_id)
@@ -329,11 +326,11 @@ def get_hangars_data(request, solarSystemID, closest_obj_id, stationID):
             'state' : 'closed'
         })
 
-    return HttpResponse(json.dumps(jstree_data))
+    return JsonResponse(jstree_data, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
-@cache_page(3 * 60 * 60) # 3 hours cache
+@cache_page(3 * 60 * 60)  # 3 hours cache
 def get_hangar_content_data(request, solarSystemID, closest_obj_id, stationID, hangarID):
     solarSystemID = int(solarSystemID)
     closest_obj_id = int(closest_obj_id)
@@ -377,11 +374,11 @@ def get_hangar_content_data(request, solarSystemID, closest_obj_id, stationID, h
             'state' : state
         })
 
-    return HttpResponse(json.dumps(jstree_data))
+    return JsonResponse(jstree_data, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
-@cache_page(3 * 60 * 60) # 3 hours cache
+@cache_page(3 * 60 * 60)  # 3 hours cache
 def get_can1_content_data(request, solarSystemID, closest_obj_id, stationID, hangarID, container1):
     solarSystemID = int(solarSystemID)
     closest_obj_id = int(closest_obj_id)
@@ -412,11 +409,11 @@ def get_can1_content_data(request, solarSystemID, closest_obj_id, stationID, han
 
         json_data.append(item)
 
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
-@cache_page(3 * 60 * 60) # 3 hours cache
+@cache_page(3 * 60 * 60)  # 3 hours cache
 def get_can2_content_data(request, solarSystemID, closest_obj_id, stationID, hangarID, container1, container2):
     assets_query = Asset.objects.filter(solarSystemID=int(solarSystemID),
                                         stationID=int(stationID),
@@ -435,11 +432,11 @@ def get_can2_content_data(request, solarSystemID, closest_obj_id, stationID, han
         item['attr'] = { 'rel' : icon , 'href' : ''  }
         json_data.append(item)
 
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
-@cache_page(3 * 60 * 60) # 3 hours cache
+@cache_page(3 * 60 * 60)  # 3 hours cache
 def search_items(request):
 
     divisions = extract_divisions(request)
@@ -478,4 +475,4 @@ def search_items(request):
                 nodeid = nodeid + '%d_' % item.container2
                 json_data.append(nodeid)
 
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)

@@ -19,7 +19,7 @@ __date__ = "2011 5 25"
 __author__ = "diabeteman"
 
 
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext as Ctx
 
@@ -91,4 +91,4 @@ def wallets_data(request):
         "aaData" : entries,
     }
 
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)

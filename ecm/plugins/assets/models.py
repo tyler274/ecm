@@ -106,7 +106,7 @@ class AssetDiff(models.Model):
     id = bigint.BigAutoField(primary_key=True) #@ReservedAssignment
     solarSystemID = models.BigIntegerField()
     stationID = models.BigIntegerField()
-    hangarID = models.PositiveIntegerField() # hangar division
+    hangarID = models.PositiveIntegerField()  # hangar division
     # eve_type = softfk.SoftForeignKey(to='eve.Type')
     eve_type = models.ForeignKey('eve.Type', db_constraint=False, on_delete=deletion.DO_NOTHING)
     quantity = models.IntegerField(default=0)
@@ -115,7 +115,7 @@ class AssetDiff(models.Model):
     flag = models.BigIntegerField()  # used to determine the state or path of the asset
     volume = models.BigIntegerField(default=0)
     
-    DATE_FIELD = 'date' # used for garbage collection
+    DATE_FIELD = 'date'  # used for garbage collection
     
     def __unicode__(self):
         try:
