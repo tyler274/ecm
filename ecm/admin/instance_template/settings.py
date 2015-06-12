@@ -219,10 +219,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-AUTHENTICATION_BACKENDS = (
-    'ecm.lib.sso_backends.KarmaFleetOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
-)
+# AUTHENTICATION_BACKENDS = (
+#     'ecm.lib.sso_backends.KarmaFleetOAuth2',
+#     'django.contrib.auth.backends.ModelBackend',
+# )
 
 CACHES = {
     'default': {

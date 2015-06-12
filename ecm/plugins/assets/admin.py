@@ -28,7 +28,7 @@ class AssetAdmin(admin.ModelAdmin):
 
 class AssetDiffAdmin(admin.ModelAdmin):
     list_display = ['solarSystemID', 'stationID', 'hangarID', 'eve_type', 'quantity', 'date', 'new']
-    
+
 
 
 admin.site.register(Asset, AssetAdmin)

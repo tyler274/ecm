@@ -20,7 +20,7 @@ __author__ = "Ajurna"
 
 from datetime import datetime, timedelta
     
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext as Ctx
 from django.db.models import Q
@@ -185,4 +185,4 @@ def transactions_data(request):
         "aaData"               : entries
     }
 
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)

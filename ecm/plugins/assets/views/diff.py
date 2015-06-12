@@ -25,7 +25,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template.context import RequestContext as Ctx
 from django.template.defaultfilters import pluralize
 from django.views.decorators.cache import cache_page
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db import connection
 
 from ecm.utils import db
@@ -41,7 +41,7 @@ from ecm.apps.corp.models import CorpHangar, Corporation, Hangar
 from ecm.views import DATE_PATTERN
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def last_date(request):
     # if called without date, redirect to the last date.
     since_weeks = int(request.GET.get('since_weeks', '8'))
@@ -60,7 +60,7 @@ def last_date(request):
     except IndexError:
         return render_to_response('ecm/assets/assets_no_data.html', context_instance=Ctx(request))
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def get_dates(request):
 
     show_in_space = json.loads(request.GET.get('space', 'true'))
@@ -90,9 +90,9 @@ def get_dates(request):
             'show' : print_time_min(date),
         })
 
-    return HttpResponse(json.dumps(dates))
+    return JsonResponse(dates, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 def root(request, date_str):
 
@@ -155,7 +155,7 @@ def root(request, date_str):
         return render_to_response('ecm/assets/assets_no_data.html', {}, Ctx(request))
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 @cache_page(3 * 60 * 60) # 3 hours cache
 def get_systems_data(request, date_str):
@@ -212,9 +212,9 @@ def get_systems_data(request, date_str):
             'state' : 'closed'
         })
     cursor.close()
-    return HttpResponse(json.dumps(jstree_data))
+    return JsonResponse(jstree_data, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 @cache_page(3 * 60 * 60) # 3 hours cache
 def get_stations_data(request, date_str, solarSystemID):
@@ -273,10 +273,10 @@ def get_stations_data(request, date_str, solarSystemID):
             'state' : 'closed'
         })
     cursor.close()
-    return HttpResponse(json.dumps(jstree_data))
+    return JsonResponse(jstree_data, safe=False)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 @cache_page(3 * 60 * 60) # 3 hours cache
 def get_hangars_data(request, date_str, solarSystemID, stationID):
@@ -323,9 +323,9 @@ def get_hangars_data(request, date_str, solarSystemID, stationID):
             'state' : 'closed'
         })
 
-    return HttpResponse(json.dumps(jstree_data))
+    return JsonResponse(jstree_data, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 @cache_page(3 * 60 * 60) # 3 hours cache
 def get_hangar_content_data(request, date_str, solarSystemID, stationID, hangarID):
@@ -355,9 +355,9 @@ def get_hangar_content_data(request, date_str, solarSystemID, stationID, hangarI
             }
         })
 
-    return HttpResponse(json.dumps(jstree_data))
+    return JsonResponse(jstree_data, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 @cache_page(3 * 60 * 60) # 3 hours cache
 def search_items(request, date_str):
@@ -379,7 +379,6 @@ def search_items(request, date_str):
     if not show_in_stations:
         query = query.filter(stationID__gt=constants.MAX_STATION_ID)
 
-
     json_data = []
 
     for item in query:
@@ -390,4 +389,4 @@ def search_items(request, date_str):
         nodeid = nodeid + '%d_' % item.hangarID
         json_data.append(nodeid)
 
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)

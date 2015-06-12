@@ -22,7 +22,7 @@ import re
 
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
-from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 
 from ecm.utils import _json as json
 from ecm.utils.format import print_duration
@@ -156,7 +156,7 @@ def fuel_data(request, pos_id):
         "iTotalDisplayRecords" : len(fuelTypeIDs),
         "aaData" : fuelTable
     }
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)
 
 #------------------------------------------------------------------------------
 @check_user_access()
@@ -210,7 +210,7 @@ def silo_data(request, pos_id):
         "iTotalDisplayRecords"  : silo_count,
         "aaData"                : silo_table,
     }
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)
 
 #------------------------------------------------------------------------------
 @check_user_access()
@@ -237,7 +237,7 @@ def oper_data(request, pos_id):
         "iTotalDisplayRecords"  : operator_count,
         "aaData"                : oper_table,
     }
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)
 
 #------------------------------------------------------------------------------
 @check_user_access()

@@ -23,7 +23,7 @@ from datetime import datetime, timedelta
 
 from django.db.models.aggregates import Min, Max, Sum
 from django.db import connection
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext as Ctx
 from django.utils.translation import gettext as tr
@@ -51,7 +51,7 @@ OPERATION_TYPES = (
     103, # Corporate Reward Tax
 )
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 def member_contrib(request):
     """
@@ -84,7 +84,7 @@ def member_contrib(request):
     }
     return render_to_response("ecm/accounting/contrib.html", data, Ctx(request))
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 columns = ['LOWER("name")', '"tax_contrib"']
 @check_user_access()
 def member_contrib_data(request):
@@ -123,9 +123,12 @@ def member_contrib_data(request):
         "aaData" : contrib_list
     }
 
-    return HttpResponse(json.dumps(json_data))
+    if params.format == 'csv':
+        return datatable_csv_data(json_data, filename='contrib.csv')
+    else:
+        return JsonResponse(json_data, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 columns = ['LOWER("name")', '"tax_contrib"']
 @check_user_access()
 def player_contrib_data(request):
@@ -170,9 +173,9 @@ def player_contrib_data(request):
         "aaData" : contrib_list
     }
 
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 def system_contrib_data(request):
     """
@@ -214,7 +217,7 @@ def system_contrib_data(request):
         "aaData" : contrib_list
     }
 
-    return HttpResponse(json.dumps(json_data))
+    return JsonResponse(json_data, safe=False)
 
 #------------------------------------------------------------------------------
 @check_user_access()
