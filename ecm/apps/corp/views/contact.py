@@ -26,7 +26,7 @@ from django.db import transaction
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import mail_admins
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template.context import RequestContext as Ctx
 from django.utils.translation import ugettext
 
@@ -117,7 +117,7 @@ def handle_contact(request):
                 mail_admins(subject, txt_content, html_message=html_content)
             
             # if everything went well, return back our public info
-            return HttpResponse(json.dumps(public_info))
+            return JsonResponse(public_info, safe=False)
             
         except (ValueError, KeyError), e:
             # invalid field value
