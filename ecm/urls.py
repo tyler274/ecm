@@ -22,13 +22,15 @@ from django.conf.urls import patterns, include
 from django.contrib import admin
 from django.http import HttpResponse
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+import object_tools
 
 from ecm.views.account.forms import PasswordChangeForm, PasswordResetForm, PasswordSetForm
 
 admin.autodiscover()
+object_tools.autodiscover()
 
 def robots(request):
-    return HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")
+    return HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")
 
 urlpatterns = patterns('',
     ###########################################################################
@@ -37,6 +39,10 @@ urlpatterns = patterns('',
     (r'^admin/',                                    include(admin.site.urls)),
     (r'^captcha/',                                  include('captcha.urls')),
 )
+
+urlpatterns += [		
+    url(r'^object-tools/', include(object_tools.tools.urls)),		
+]
 
 urlpatterns += staticfiles_urlpatterns()
 
