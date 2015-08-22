@@ -18,18 +18,19 @@
 __date__ = "2011 10 30"
 __author__ = "JerryKhan"
 
-from django.conf.urls import patterns
+from django.conf.urls import url
+from ecm.plugins.pos import views
 
-urlpatterns = patterns('ecm.plugins.pos.views',
+urlpatterns = [
     ###########################################################################
     # POS VIEWS
-    (r'^$',                     'pos_list.poses'),          # To access the list definition
-    (r'^data/$',                'pos_list.poses_data'),     # ajax datatable getter
-    (r'^(\d+)/$',               'pos_details.one_pos'),
-    (r'^(\d+)/fuel_data/$',     'pos_details.fuel_data'),
-    (r'^(\d+)/silo_data/$',     'pos_details.silo_data'),
-    (r'^(\d+)/oper_data/$',     'pos_details.oper_data'),
-    (r'^(\d+)/update_name/$',   'pos_details.update_pos_name'),
-    (r'^(\d+)/update_oper/$',   'pos_details.update_pos_oper'),
-    (r'^fuel_summary/$',        'pos_fuel.pos_fuel'),
-)
+    url(r'^$', views.pos_list.poses),          # To access the list definition
+    url(r'^data/$', views.pos_list.poses_data),     # ajax datatable getter
+    url(r'^(\d+)/$', views.pos_details.one_pos),
+    url(r'^(\d+)/fuel_data/$', views.pos_details.fuel_data),
+    url(r'^(\d+)/silo_data/$', views.pos_details.silo_data),
+    url(r'^(\d+)/oper_data/$', views.pos_details.oper_data),
+    url(r'^(\d+)/update_name/$', views.pos_details.update_pos_name),
+    url(r'^(\d+)/update_oper/$', views.pos_details.update_pos_oper),
+    url(r'^fuel_summary/$', views.pos_fuel.pos_fuel),
+]
