@@ -18,28 +18,27 @@
 __date__ = "2010-01-24"
 __author__ = "diabeteman"
 
-from django.conf.urls import include, url
+from django.conf.urls import patterns, include
 from django.contrib import admin
 from django.http import HttpResponse
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.contrib.auth import views as auth_views
+import object_tools
 
 from ecm.views.account.forms import PasswordChangeForm, PasswordResetForm, PasswordSetForm
-from ecm import views as ecm_views
 
 admin.autodiscover()
 object_tools.autodiscover()
 
 def robots(request):
-    return HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")
+    return HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")
 
-urlpatterns = [
+urlpatterns = patterns('',
     ###########################################################################
     # MISC VIEWS
-    url(r'^robots\.txt$', robots),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^captcha/', include('captcha.urls')),
-]
+    (r'^robots\.txt$',                              robots),
+    (r'^admin/',                                    include(admin.site.urls)),
+    (r'^captcha/',                                  include('captcha.urls')),
+)
 
 urlpatterns += [		
     url(r'^object-tools/', include(object_tools.tools.urls)),		
@@ -47,113 +46,91 @@ urlpatterns += [
 
 urlpatterns += staticfiles_urlpatterns()
 
-urlpatterns += [
-    url('^', include('django.contrib.auth.urls')),
+urlpatterns += patterns('django.contrib.auth.views',
     ###########################################################################
     # DJANGO BUILT-IN AUTH VIEWS
-    url(r'^account/login/$', auth_views.login, 
-            {
-                'template_name' : 'ecm/auth/login.html'
-            }
-        ),
-    url(r'^account/logout/$', auth_views.logout, 
-            {
-                'next_page' : '/'
-            }
-        ),
-    url(r'^account/passwordchange/$', auth_views.password_change,
-            {
-                'template_name' : 'ecm/auth/password_change.html',
-                'password_change_form' : PasswordChangeForm
-            }
-        ),
-    url(r'^account/passwordchange/done/$',  auth_views.password_change_done,
-            {
-                'template_name' : 'ecm/auth/password_change_done.html'
-            }
-        ),
-    url(r'^account/passwordreset/$', auth_views.password_reset,
-            {
-                'template_name' : 'ecm/auth/password_reset.html',
-                'email_template_name' : 'ecm/auth/password_reset_email.txt',
-                'password_reset_form' : PasswordResetForm,
-                'post_reset_redirect' : '/account/passwordreset/sent/'
-            }
-        ),
-    url(r'^account/passwordreset/sent/$',   auth_views.password_reset_done,
-            {
-                'template_name' : 'ecm/auth/password_reset_done.html'
-            }
-        ),
-    url(r'^account/passwordreset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', auth_views.password_reset_confirm,
-            {
-                'template_name' : 'ecm/auth/password_reset_confirm.html',
-                'set_password_form' : PasswordSetForm
-            }
-        ),
-    url(r'^account/passwordreset/complete/$', auth_views.password_reset_complete,
-            {
-                'template_name' : 'ecm/auth/password_reset_complete.html'
-            }
-        ),
+    (r'^account/login/$',                'login',
+                                            {'template_name' : 'ecm/auth/login.html'}),
+    (r'^account/logout/$',               'logout',
+                                            {'next_page' : '/'}),
+    (r'^account/passwordchange/$',       'password_change',
+                                            {'template_name' : 'ecm/auth/password_change.html',
+                                            'password_change_form' : PasswordChangeForm}),
+    (r'^account/passwordchange/done/$',  'password_change_done',
+                                            {'template_name' : 'ecm/auth/password_change_done.html'}),
+    (r'^account/passwordreset/$',        'password_reset',
+                                            {'template_name' : 'ecm/auth/password_reset.html',
+                                             'email_template_name' : 'ecm/auth/password_reset_email.txt',
+                                             'password_reset_form' : PasswordResetForm,
+                                             'post_reset_redirect' : '/account/passwordreset/sent/'}),
+    (r'^account/passwordreset/sent/$',   'password_reset_done',
+                                            {'template_name' : 'ecm/auth/password_reset_done.html'}),
+    (r'^account/passwordreset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$','password_reset_confirm',
+                                            {'template_name' : 'ecm/auth/password_reset_confirm.html',
+                                             'set_password_form' : PasswordSetForm}),
+    (r'^account/passwordreset/complete/$','password_reset_complete',
+                                            {'template_name' : 'ecm/auth/password_reset_complete.html'}),
+)
 
-]
-
-urlpatterns += [
+urlpatterns += patterns('ecm.views.account',
     ###########################################################################
     # ECM AUTH + USER PROFILE VIEWS
-    url(r'^account/$', ecm_views.account.home.account),
-    url(r'^account/addapi/$', ecm_views.account.home.add_api),
-    url(r'^account/deleteapi/(\d+)/$', ecm_views.account.home.delete_api),
-    url(r'^account/deletecharacter/(\d+)/$', ecm_views.account.home.delete_character),
-    url(r'^account/editapi/(\d+)/$', ecm_views.account.home.edit_api),
-    url(r'^account/binding/add/(\d+)/$', ecm_views.account.home.add_binding),
-    url(r'^account/binding/delete/(\d+)/$', ecm_views.account.home.delete_binding),
+    (r'^account/$',                       'home.account'),
+    (r'^account/addapi/$',                'home.add_api'),
+    (r'^account/deleteapi/(\d+)/$',       'home.delete_api'),
+    (r'^account/deletecharacter/(\d+)/$', 'home.delete_character'),
+    (r'^account/editapi/(\d+)/$',         'home.edit_api'),
+    (r'^account/binding/add/(\d+)/$',     'home.add_binding'),
+    (r'^account/binding/delete/(\d+)/$',  'home.delete_binding'),
 
-    url(r'^account/create/$', ecm_views.account.signup.create_account),
-    url(r'^account/activate/(\w+)/$', ecm_views.account.signup.activate_account),
-]
+    (r'^account/create/$',                'signup.create_account'),
+    (r'^account/activate/(\w+)/$',        'signup.activate_account'),
 
-urlpatterns += [
+)
+
+urlpatterns += patterns('ecm.views',
     ###########################################################################
     # COMMON VIEWS
-    url(r'^$', ecm_views.common.home),
-    url(r'^editmotd/$', ecm_views.common.edit_motd),
-    url(r'^editapi/$', ecm_views.common.edit_apikey),
-]
+    (r'^$',                     'common.home'),
+    (r'^editmotd/$',            'common.edit_motd'),
+    (r'^editapi/$',             'common.edit_apikey'),
+)
 
-urlpatterns += [
+urlpatterns += patterns('ecm.views.api',
     ###########################################################################
     # JSON API VIEWS
-    url(r'^api/players/$', ecm_views.api.players),
-    url(r'^api/bindings/(\w+)/users/$', ecm_views.api.user_bindings),
-    url(r'^api/bindings/(\w+)/groups/$', ecm_views.api.group_bindings),
-]
+    (r'^api/players/$',               'players'),
+    (r'^api/bindings/(\w+)/users/$',  'user_bindings'),
+    (r'^api/bindings/(\w+)/groups/$', 'group_bindings'),
+)
 
-urlpatterns += [
+urlpatterns += patterns('ecm.views.ajax',
     ###########################################################################
     # AJAX QUERY VIEWS
-    url(r'^ajax/celestials/$', ecm_views.ajax.celestial.list),
-    url(r'^ajax/solarsystems/$', ecm_views.ajax.solarsystem.list),
-    url(r'^ajax/moons/$', ecm_views.ajax.moons.list),
-]
+    (r'^ajax/celestials/$',           'celestial.list'),
+    (r'^ajax/solarsystems/$',         'solarsystem.list'),
+    (r'^ajax/moons/$',                'moons.list'),
+)
+
 
 import ecm.apps
 CORE_APPS_URLS = []
 for app in ecm.apps.LIST:
     if app.urlconf is not None:
-        CORE_APPS_URLS.append( url(r'^' + app.app_prefix + '/', include(app.urlconf)) )
+        CORE_APPS_URLS.append( (r'^' + app.app_prefix + '/', include(app.urlconf)) )
 if CORE_APPS_URLS:
-    urlpatterns += [*CORE_APPS_URLS,]
+    urlpatterns += patterns('',  *CORE_APPS_URLS)
 
 
 import ecm.plugins
 PLUGINS_URLS = []
 for plugin in ecm.plugins.LIST:
-    PLUGINS_URLS.append( url(r'^' + plugin.app_prefix + '/', include(plugin.urlconf)) )
+    PLUGINS_URLS.append( (r'^' + plugin.app_prefix + '/', include(plugin.urlconf)) )
 if PLUGINS_URLS:
-    urlpatterns += [*PLUGINS_URLS,]
-
+    urlpatterns += patterns('',  *PLUGINS_URLS)
+    
 ################################################
 #custom handlers for http return codes
 handler500='ecm.views.custom_handlers.server_error'
+
+
