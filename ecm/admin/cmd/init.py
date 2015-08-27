@@ -18,7 +18,7 @@
 
 from __future__ import with_statement
 
-__date__ = '2012 3 23'
+__date__ = '2012-3-23'
 __author__ = 'diabeteman'
 
 import os

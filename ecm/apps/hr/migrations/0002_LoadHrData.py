@@ -7,7 +7,7 @@ from django.core.management import call_command
 
 def load_corp_data(apps, schema_editor):
     call_command("loaddata", "initial_data.json")
-
+    # pass
 
 class Migration(migrations.Migration):
 

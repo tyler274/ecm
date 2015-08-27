@@ -47,6 +47,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('corp', '0001_initial'),
+        ('hr', '0001_initial'),
     ]
 
     operations = [
