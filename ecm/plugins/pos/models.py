@@ -79,7 +79,12 @@ class POS(models.Model):
     ACCESS_MASK = 3
 
     # Need a BigAutoField or proper BigIntegerField PK
-    item_id = bigint.BigAutoField(primary_key=True)
+    # item_id = bigint.BigAutoField(primary_key=True)
+
+    # item id does not need to be the primary key in ECM
+    # at least until django properly support bigint foreign keys
+    id = models.AutoField(primary_key=True)
+    item_id = models.BigIntegerField(db_index=True, default=0)
 
     location_id = models.BigIntegerField(default=0)
     location = models.CharField(max_length=255, default="")

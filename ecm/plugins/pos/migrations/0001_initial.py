@@ -31,7 +31,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='POS',
             fields=[
-                ('item_id', ecm.lib.bigint.BigAutoField(serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('item_id', models.BigIntegerField(default=0)),
                 ('location_id', models.BigIntegerField(default=0)),
                 ('location', models.CharField(default=b'', max_length=255)),
                 ('moon_id', models.BigIntegerField(default=0)),

@@ -205,15 +205,15 @@ def get_details(pos, api_resp, sov):
 
     for fuel in api_resp.fuel:
         fuel_level = FuelLevel.objects.create(pos=pos,
-                                              type_id = fuel.typeID,
-                                              quantity = fuel.quantity,
-                                              date = current_time)
+                                              type_id=fuel.typeID,
+                                              quantity=fuel.quantity,
+                                              date=current_time)
 
         base_fuel_cons = ControlTowerResource.objects.get(control_tower=pos.type_id, resource=fuel.typeID).quantity
         corp = Corporation.objects.mine()
         # sov fuel check
         try:
-            if pos.location_id < 31000000:#check not in wh
+            if pos.location_id < 31000000: # check not in wh
                 if sov[pos.location_id]['faction'] == 0 and \
                    sov[pos.location_id]['alliance'] == corp.alliance.allianceID and \
                    base_fuel_cons > 1:
