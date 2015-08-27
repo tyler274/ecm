@@ -20,6 +20,8 @@ __author__ = "Ajurna"
 
 import logging
 
+from datetime import datetime
+
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import ugettext as tr
@@ -139,7 +141,8 @@ def get_basic_info(pos, api_row):
     pos.type_name = item.typeName
     pos.fuel_type_id = constants.RACE_TO_FUEL[item.raceID]
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def get_details(pos, api_resp, sov):
     """
     The XML API result of StarbaseDetail is
@@ -178,7 +181,8 @@ def get_details(pos, api_resp, sov):
         <cachedUntil>2011-04-24 01:21:31</cachedUntil>
     </eveapi>
     """
-    current_time = timezone.make_aware(api_resp._meta.currentTime, timezone.utc)
+    # current_time = timezone.make_aware(api_resp._meta.currentTime, timezone.utc)
+    current_time = datetime.utcnow
     
     pos.state = api_resp.state
     pos.state_timestamp = timezone.make_aware(api_resp.stateTimestamp, timezone.utc)
@@ -201,9 +205,9 @@ def get_details(pos, api_resp, sov):
 
     for fuel in api_resp.fuel:
         fuel_level = FuelLevel.objects.create(pos=pos,
-                                     type_id = fuel.typeID,
-                                     quantity = fuel.quantity,
-                                     date = current_time)
+                                              type_id = fuel.typeID,
+                                              quantity = fuel.quantity,
+                                              date = current_time)
 
         base_fuel_cons = ControlTowerResource.objects.get(control_tower=pos.type_id, resource=fuel.typeID).quantity
         corp = Corporation.objects.mine()
