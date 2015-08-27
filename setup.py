@@ -33,7 +33,7 @@ for scheme in INSTALL_SCHEMES.values():
 
 dependencies = [
     'django >= 1.8',
-    'django_simple_captcha >= 0.3',
+    # 'django_simple_captcha >= 0.3',
     'django_compressor >= 1.1.2',
     'setuptools',
     'pytz',
@@ -44,6 +44,7 @@ dependencies = [
     'django-flat-theme',
     'django-redis',
     'django-debug-toolbar',
+    'django-recaptcha',
 ]
 
 setup(

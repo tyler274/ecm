@@ -242,8 +242,10 @@ CACHES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
-CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
-CAPTCHA_NOISE_FUNCTIONS = ()
+RECAPTCHA_PUBLIC_KEY = config.get('misc', 'recaptcha_public_key')
+RECAPTCHA_PRIVATE_KEY = config.get('misc', 'recaptcha_private_key')
+RECAPTCHA_USE_SSL = config.getboolean('misc', 'recaptcha_use_ssl')
+NOCAPTCHA = config.getboolean('misc', 'nocaptcha')
 
 #################
 # DJANGO 'APPS' #

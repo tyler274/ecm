@@ -30,13 +30,14 @@ from django.utils.http import int_to_base36
 from django.template import Context
 from django.utils.translation import ugettext_lazy as _
 
-from captcha.fields import CaptchaField
+from captcha.fields import ReCaptchaField
 
 from ecm.apps.common import api
 from ecm.apps.common.models import UserAPIKey, UserBinding
 from ecm.views.account.fields import PasswordField
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class AccountCreationForm(forms.Form):
 
     username = forms.RegexField(label=_("Username"), max_length=30, regex=r'^[\w.@+-]+$',
@@ -51,7 +52,7 @@ class AccountCreationForm(forms.Form):
     keyID = forms.IntegerField(label="API Key ID")
     vCode = forms.CharField(label=_("Verification Code"),
                             widget=forms.TextInput(attrs={'size':'100'}))
-    captcha = CaptchaField()
+    captcha = ReCaptchaField()
     characters = []
 
     def clean_username(self):
@@ -107,10 +108,11 @@ class AccountCreationForm(forms.Form):
 
         return cleaned_data
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class PasswordResetForm(forms.Form):
     email = forms.EmailField(label=_("E-mail"), max_length=75)
-    captcha = CaptchaField()
+    captcha = ReCaptchaField()
 
     def clean_email(self):
         """
@@ -145,7 +147,8 @@ class PasswordResetForm(forms.Form):
             send_mail(_("Password reset on %s") % settings.EXTERNAL_HOST_NAME,
                 t.render(Context(c)), from_email, [user.email])
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class PasswordSetForm(forms.Form):
     """
     A form that lets a user change set his/her password without
@@ -173,7 +176,8 @@ class PasswordSetForm(forms.Form):
             self.user.save()
         return self.user
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class PasswordChangeForm(PasswordSetForm):
     """
     A form that lets a user change his/her password by entering
@@ -192,7 +196,7 @@ class PasswordChangeForm(PasswordSetForm):
 PasswordChangeForm.base_fields.keyOrder = ['old_password', 'new_password1', 'new_password2']
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 class AddApiKeyForm(forms.Form):
     keyID = forms.IntegerField(label=_("API Key ID"))
     vCode = forms.CharField(label=_("Verification Code"),
@@ -225,7 +229,8 @@ class AddApiKeyForm(forms.Form):
 
         return cleaned_data
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class EditApiKeyForm(forms.Form):
     keyID = forms.IntegerField(label=_("API Key ID"), widget=forms.TextInput(attrs={'readonly':'readonly'}))
     vCode = forms.CharField(label=_("Verification Code"),
@@ -250,7 +255,8 @@ class EditApiKeyForm(forms.Form):
 
         return cleaned_data
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class AddBindingForm(forms.Form):
     username = forms.CharField(label=_("External Username"))
     password = forms.CharField(label=_("External Password"),
