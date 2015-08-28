@@ -161,7 +161,7 @@ from ecm.views import common, api
 admin.autodiscover()
 
 def robots(request):
-    return HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")
+    return HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")
 
 urlpatterns = [
     ###########################################################################

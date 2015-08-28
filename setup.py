@@ -45,6 +45,7 @@ dependencies = [
     'django-redis',
     'django-debug-toolbar',
     'django-recaptcha',
+    'raven',
 ]
 
 setup(
