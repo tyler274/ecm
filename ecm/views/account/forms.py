@@ -200,7 +200,7 @@ PasswordChangeForm.base_fields.keyOrder = ['old_password', 'new_password1', 'new
 class AddApiKeyForm(forms.Form):
     keyID = forms.IntegerField(label=_("API Key ID"))
     vCode = forms.CharField(label=_("Verification Code"),
-                            widget=forms.TextInput(attrs={'size':'100'}))
+                            widget=forms.TextInput(attrs={'size':'50'}))
     user = AnonymousUser()
 
     def clean_keyID(self):
@@ -234,7 +234,7 @@ class AddApiKeyForm(forms.Form):
 class EditApiKeyForm(forms.Form):
     keyID = forms.IntegerField(label=_("API Key ID"), widget=forms.TextInput(attrs={'readonly':'readonly'}))
     vCode = forms.CharField(label=_("Verification Code"),
-                            widget=forms.TextInput(attrs={'size':'100'}))
+                            widget=forms.TextInput(attrs={'size':'50'}))
     user = AnonymousUser()
 
     def clean(self):

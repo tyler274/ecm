@@ -93,7 +93,7 @@ def timers_data(request):
         timers = timers.order_by(sort_order)
 
     if not params.display_all:
-        timers =  timers.filter(timers__gte=datetime.utcnow())
+        timers = timers.filter(timers__gte=datetime.utcnow())
 
     # Build result list for formatted/labeled data
     timer_list = []

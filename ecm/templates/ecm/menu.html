@@ -1,27 +1,75 @@
-{% if menus %}<div class="sidebar-nav well">
-  <ul class="nav nav-list">
-  {% for menu in menus %}
-    <li class="step-1 {%if menu.url in path%}child-active{%if menu.url == path%} active{%endif%}{%endif%} {% if menu.items %}has-child{%endif%}">
-      <a href="{{menu.url}}">{{menu.title}}</a>
+{% if menus %}
+{#<div class="sidebar-nav well col-sm-3">#}
+{#  <ul class="nav nav-list">#}
+{#  {% for menu in menus %}#}
+{#    <li class="step-1 {%if menu.url in path%}child-active{%if menu.url == path%} active{%endif%}{%endif%} {% if menu.items %}has-child{%endif%}">#}
+{#      <a href="{{menu.url}}">{{menu.title}}</a>#}
+{#      {% if menu.items %}#}
+{#      <ul class="nav nav-list">#}
+{#        {% for item in menu.items %}#}
+{#        <li class="step-2 {%if item.url in path%}child-active{%if item.url == path%} active{%endif%}{%endif%} {% if item.items %}has-child{%endif%}">#}
+{#          <a href="{{item.url}}">{{item.title}}</a>#}
+{#          {% if item.items %}#}
+{#          <ul class="nav nav-list">#}
+{#            {% for subitem in item.items %}#}
+{#            <li class="step-3 {% if subitem.url == path %}active{% endif %}">#}
+{#              <a href="{{subitem.url}}">{{subitem.title}}</a>#}
+{#            </li>#}
+{#            {% endfor %}#}
+{#          </ul>#}
+{#          {% endif %}#}
+{#        </li>#}
+{#        {% endfor %}#}
+{#      </ul>#}
+{#      {% endif %}#}
+{#    </li>#}
+{#  {% endfor %}#}
+{#  </ul>#}
+{#</div>#}
+
+<div id="MainMenu">
+  <div class="list-group panel">
+    {% for menu in menus %}
+      <div class="list-group-item {%if menu.url in path%}active{%endif%}">
+        <a href="{{menu.url}}">{{ menu.title }}</a>
+        {% if menu.items %}
+          <a href="#demo{{ forloop.counter }}" class="caret" data-toggle="collapse" data-parent="#MainMenu"></a>
+        {% endif %}
+      </div>
       {% if menu.items %}
-      <ul class="nav nav-list">
-        {% for item in menu.items %}
-        <li class="step-2 {%if item.url in path%}child-active{%if item.url == path%} active{%endif%}{%endif%} {% if item.items %}has-child{%endif%}">
-          <a href="{{item.url}}">{{item.title}}</a>
-          {% if item.items %}
-          <ul class="nav nav-list">
-            {% for subitem in item.items %}
-            <li class="step-3 {% if subitem.url == path %}active{% endif %}">
-              <a href="{{subitem.url}}">{{subitem.title}}</a>
-            </li>
-            {% endfor %}
-          </ul>
-          {% endif %}
-        </li>
-        {% endfor %}
-      </ul>
+        <div class="collapse {%if menu.url in path%}in{%endif%}" id="demo{{ forloop.counter }}">
+          {% for item in menu.items %}
+            <div class="list-group-item col-xs-offset-2 {%if item.url in path%}active{%endif%}">
+              <a href="{{ item.url }}">{{item.title}}</a>
+              {% if item.items %}
+                <a href="#SubMenu{{ forloop.counter }}" class="caret" data-toggle="collapse" data-parent="#SubMenu{{ forloop.counter }}"></a>
+              {% endif %}
+            </div>
+            {% if item.items %}
+              <div class="collapse {%if item.url in path%}in{%endif%} list-group-submenu" id="SubMenu{{ forloop.counter }}">
+                {% for subitem in item.items %}
+                  <div class="list-group-item col-xs-offset-4 {%if subitem.url == path%}active{%endif%}">
+                    <a href="{{subitem.url}}" data-parent="#SubMenu{{ forloop.parentloop.counter }}">{{subitem.title}}</a>
+                  </div>
+  {#              <a href="#SubSubMenu1" class="list-group-item" data-toggle="collapse" data-parent="#SubSubMenu1">Subitem 3 c <i class="fa fa-caret-down"></i></a>#}
+  {#              <div class="collapse list-group-submenu list-group-submenu-1" id="SubSubMenu1">#}
+  {#                <a href="#" class="list-group-item" data-parent="#SubSubMenu1">Sub sub item 1</a>#}
+  {#                <a href="#" class="list-group-item" data-parent="#SubSubMenu1">Sub sub item 2</a>#}
+  {#              </div>#}
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
       {% endif %}
-    </li>
-  {% endfor %}
-  </ul>
-</div>{% endif %}
+    {% endfor %}
+{#      <a href="#demo4" class="list-group-item list-group-item-success" data-toggle="collapse" data-parent="#MainMenu">Item 4</a>#}
+{#      <div class="collapse" id="demo4">#}
+{#        <a href="" class="list-group-item">Subitem 1</a>#}
+{#        <a href="" class="list-group-item">Subitem 2</a>#}
+{#        <a href="" class="list-group-item">Subitem 3</a>#}
+{#      </div>#}
+  </div>
+</div>
+
+{% endif %}

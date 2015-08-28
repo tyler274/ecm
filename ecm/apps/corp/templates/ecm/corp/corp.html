@@ -4,7 +4,7 @@
 
 {% block main_content %}
 <div class="row-fluid">
-	<div class="span8">
+	<div class="col-md-8">
 		<div class="page-header">
 		  <h1>{% trans 'Message Of The Day' %}</h1>
 		</div>
@@ -25,7 +25,7 @@
 	        <dt>{% trans 'Description' %}</dt><dd>{{ corp.description|safe }}</dd>
         </dl>
 	</div>
-	<div class="span4">
+	<div class="col-md-4">
 	  <img src="//image.eveonline.com/Corporation/{{ corp.corporationID }}_128.png"></img><br>
 	  <em>{{ corp.corporationName }} [{{ corp.ticker }}]</em><br>
 	  {% if corp.alliance.allianceID %}

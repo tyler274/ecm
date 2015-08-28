@@ -66,14 +66,15 @@ Number.prototype.formatMoney = function(c, d, t){
 };
 
 var DATATABLE_DEFAULTS = {
-    sPaginationType: 'bootstrap',
+    sPaginationType: 'full_numbers',
+    responsive: true,
     bProcessing: true,
     bServerSide: true,
     bAutoWidth: false,
     iDisplayLength: 25,         /* default display 25 items */
     bStateSave: true,       /* table state persistance */
     iCookieDuration: 60 * 60, /* persistance duration 1 hour */
-    sDom: "<'row-fluid'<'span5'l><'span7'p>>rt<'row-fluid'<'span5'i><'span7'p>>",
+    sDom: "<'row-fluid'<'col-md-5'l><'col-md-7'p>>rt<'row-fluid'<'col-md-5'i><'col-md-7'p>>",
 
     /* the search field being outside the table object, we need to save its status
      * explicitly here in order to restore it with the rest */

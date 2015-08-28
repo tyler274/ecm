@@ -33,7 +33,7 @@ from ecm.apps.hr.models import Member
 from ecm.apps.common.models import ColorThreshold, UpdateDate
 from ecm.apps.hr.views import get_members, MEMBERS_COLUMNS
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 def members(request):
     
@@ -52,7 +52,7 @@ def members(request):
     }
     return render_to_response("ecm/hr/members/list.html", data, Ctx(request))
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 SUPER_CAPITALS = [
     'Erebus', # <3
     'Avatar', 
@@ -64,7 +64,7 @@ SUPER_CAPITALS = [
     'Hel', 
 ]
 @check_user_access()
-@cache_page(60 * 60) # 1 hour cache
+@cache_page(60 * 60)  # 1 hour cache
 def members_data(request):
     try:
         params = extract_datatable_params(request)
@@ -102,7 +102,7 @@ def members_data(request):
     else:
         return datatable_ajax_data(members, params.sEcho, total_members, filtered_members)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
 def unassociated(request):
     data = {
@@ -115,9 +115,9 @@ def unassociated(request):
     }
     return render_to_response("ecm/hr/members/unassociated.html", data, Ctx(request))
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
-@cache_page(60 * 60) # 1 hour cache
+@cache_page(60 * 60)  # 1 hour cache
 def unassociated_data(request):
     try:
         params = extract_datatable_params(request)
@@ -135,9 +135,9 @@ def unassociated_data(request):
 
     return datatable_ajax_data(members, params.sEcho, total_members, filtered_members)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 @check_user_access()
-@cache_page(60 * 60) # 1 hour cache
+@cache_page(60 * 60)  # 1 hour cache
 def unassociated_clip(request):
     query = Corporation.objects.mine().members.filter(owner=None).order_by("name")
     data = query.values_list("name", flat=True)
