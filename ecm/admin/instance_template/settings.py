@@ -41,7 +41,7 @@ INSTANCE_TEMPLATE_PACKAGE = os.path.join(ECM_PACKAGE, 'admin/instance_template')
 
 CONFIG_FILES = [
     rel_path('settings.ini', root=INSTANCE_TEMPLATE_PACKAGE), # default settings
-    rel_path('settings.ini'), # local settings
+    rel_path('settings.ini'),  # local settings
 ]
 
 SCHEDULER_MAX_CONCURRENT_TASKS = 1
@@ -91,7 +91,7 @@ def get_db_config():
         
         return db_config 
 
-DATABASES = { # see http://docs.djangoproject.com/en/1.3/ref/settings/#databases
+DATABASES = {  # see http://docs.djangoproject.com/en/1.3/ref/settings/#databases
     'default': get_db_config(),
 }
 
@@ -161,7 +161,7 @@ COMPRESS_JS_FILTERS = (
     # 'compressor.filters.jsmin.JSMinFilter',
 )
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
-# COMPRESS_ENABLED = True
+COMPRESS_ENABLED = True
 
 #############
 # TEMPLATES #
@@ -170,8 +170,8 @@ COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-         # aside from looking in each django app, the template loaders
-         # will look in these directories
+        # aside from looking in each django app, the template loaders
+        # will look in these directories
         'DIRS': [
             (rel_path('templates/', root=ECM_PACKAGE)),
         ],
@@ -252,8 +252,8 @@ NOCAPTCHA = config.getboolean('misc', 'nocaptcha')
 #################
 
 INSTALLED_APPS = [
-    'object_tools',
     'flat',
+    'object_tools',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -310,8 +310,8 @@ LOGGING = {
             'level': 'INFO',
             'filename': os.path.join(LOG_FILES_DIR, 'ecm.log'),
             # 'delay': True, # wait until first log record is emitted to open file
-            'when': 'midnight', # roll over each day at midnight
-            'backupCount': 15, # keep 15 backup files
+            'when': 'midnight',  # roll over each day at midnight
+            'backupCount': 15,  # keep 15 backup files
         },
         'console_handler': {
             'class': 'logging.StreamHandler',
@@ -348,7 +348,8 @@ LOGGING = {
 }
 
 LOCALE_PATHS = (
-    # don't strip the comma. for some reason i can't fathom, django won't take into account the LOCALE_PATHS tuple (which
+    # don't strip the comma. for some reason i can't fathom,
+    # django won't take into account the LOCALE_PATHS tuple (which
     # isn't really one ftm, since we don't have yet per app/plugins locale/ directories)
     rel_path('locale', root=ECM_PACKAGE),
 )
