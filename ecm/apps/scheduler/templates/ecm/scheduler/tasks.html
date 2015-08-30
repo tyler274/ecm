@@ -32,8 +32,8 @@
 
 {% block post_javascripts %}
 <script type="text/javascript">
-LOADING_ICON = '<img src="/static/ecm/img/throbber.gif" alt="Running"/>';
-SCHEDULED_ICON = '<img src="/static/ecm/img/clock.png" alt="Scheduled"/>';
+LOADING_ICON = '<img src="{% static 'ecm/img/clock.png' %}" alt="Running"/>';
+SCHEDULED_ICON = '<img src="{% static 'ecm/img/clock.png' %}" alt="Scheduled"/>';
 TABLE = null;
 $(document).ready(function() {
     TABLE = $('#tasks_table').dataTable($.extend(true, {}, DATATABLE_DEFAULTS, {
