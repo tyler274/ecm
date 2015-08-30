@@ -45,6 +45,7 @@ dependencies = [
     'django-debug-toolbar',
     'django-recaptcha',
     'raven',
+    'eveapi',
 ]
 
 setup(
