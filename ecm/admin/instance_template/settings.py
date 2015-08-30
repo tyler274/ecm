@@ -353,3 +353,5 @@ LOCALE_PATHS = (
     # isn't really one ftm, since we don't have yet per app/plugins locale/ directories)
     rel_path('locale', root=ECM_PACKAGE),
 )
+
+BASE_API_URL = 'api.eveonline.com'

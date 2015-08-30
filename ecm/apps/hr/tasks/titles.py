@@ -49,8 +49,11 @@ def update():
     # connect to eve API
     api_conn = api.connect()
     # retrieve /corp/Titles.xml.aspx
-    titlesApi = api_conn.corp.Titles(characterID=api.get_charID())
-    api.check_version(titlesApi._meta.version)
+    # titlesApi = api_conn.corp.Titles(characterID=api.get_charID())
+    titlesApi = api.evelink.corp.Corp(api=api_conn).titles().result
+
+    # api.check_version(titlesApi._meta.version)
+    # TODO: implement this for evelink
 
     currentTime = timezone.make_aware(titlesApi._meta.currentTime, timezone.utc)
     cachedUntil = timezone.make_aware(titlesApi._meta.cachedUntil, timezone.utc)
@@ -65,7 +68,7 @@ def update():
     # we get all the old TitleComposition from the database
     oldList = list(TitleComposition.objects.all())
 
-    for title in titlesApi.titles:
+    for id, title in titlesApi.iteritems():
         newList.extend(parse_one_title(title, my_corp))
 
     diffs = []
@@ -104,9 +107,9 @@ def parse_one_title(titleApi, my_corp):
     '''
     roleList = []
 
-    titleID   = titleApi["titleID"]
+    titleID = title['id']
 
-    name = unicode(titleApi["titleName"])
+    name = unicode(titleApi['name'])
     if name.strip() == '':
         name = 'Title #%d' % titleID
 
@@ -147,11 +150,34 @@ def parse_one_title(titleApi, my_corp):
             # reference: http://stackoverflow.com/questions/5342440/reset-auto-increment-counter-in-postgres
             cursor.execute('ALTER SEQUENCE auth_group_id_seq RESTART WITH %s;', [maxid + 1])
 
+    '''
+    Evelink does not follow the same naming pattern as eveapi, however the later names are enshrined in the db so
+    we have to bridge
+    '''
+    role_type_conversion = {
+        'roles' : ['global', ''],
+        'rolesAtOther' : ['at_other', ''],
+        'rolesAtBase' : ['at_base', ''],
+        'rolesAtHQ': ['at_hq', ''],
+        'grantableRoles' : ['can_grant', 'global'],
+        'grantableRolesAtHQ' : ['can_grant', 'at_hq'],
+        'grantableRolesAtBase' : ['can_grant', 'at_base'],
+        'grantableRolesAtOther' : ['can_grant', 'at_other'],
+    }
     for roleType in RoleType.objects.all():
         # for each role category, we extend the role composition list for the current title
-        roleList.extend(parseRoleType( title    = title,
-                                       roleType = roleType,
-                                       roles    = titleApi[roleType.typeName] ))
+        if not role_type_conversion[roleType.typeName][1]:
+            roleList.extend(parseRoleType(title=title,
+                                          roleType=roleType,
+                                           # roles    = titleApi[roleType.typeName] ))
+                                          roles=titleApi['roles'][role_type_conversion[roleType.typeName]]
+                                          ))
+        else:
+            roleList.extend(parseRoleType(title=title,
+                                          roleType=roleType,
+                                           # roles    = titleApi[roleType.typeName] ))
+                                          roles=titleApi['roles'][role_type_conversion[roleType.typeName][0]][role_type_conversion[roleType.typeName][1]]
+                                          ))
 
     return roleList
 

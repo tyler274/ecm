@@ -46,6 +46,8 @@ dependencies = [
     'django-recaptcha',
     'raven',
     'eveapi',
+    'evelink',
+    'requests',
 ]
 
 setup(

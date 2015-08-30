@@ -26,7 +26,8 @@ from ecm.apps.corp.tasks.corp import fix_description
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def get_corp(corporationID):
     """
      corporationID: int
@@ -35,47 +36,53 @@ def get_corp(corporationID):
     try:
         return Corporation.objects.get(corporationID=corporationID)
     except Corporation.DoesNotExist:
-        conn = api.eveapi.EVEAPIConnection()
-        api_corp = conn.corp.CorporationSheet(corporationID=corporationID)
-        LOG.info("Adding new Corporation: "+ str(api_corp.corporationName))
-        corp = Corporation(corporationID   = api_corp.corporationID,
-                           corporationName = str(api_corp.corporationName),
-                           ticker          = api_corp.ticker,
-                           ceoID           = api_corp.ceoID,
-                           ceoName         = api_corp.ceoName,
-                           stationID       = api_corp.stationID,
-                           stationName     = api_corp.stationName,
-                           description     = fix_description(api_corp.description),
-                           taxRate         = api_corp.taxRate,
+        # conn = api.eveapi.EVEAPIConnection()
+        connection = api.evelink.api.API()
+        # api_corp = conn.corp.CorporationSheet(corporationID=corporationID)
+        api_corp = connection.corp.Corp(api=connection).corporation_sheet(corp_id=corporationID).result
+        LOG.info("Adding new Corporation: " + str(api_corp['name']))
+
+        corp = Corporation(corporationID   = api_corp['id'],
+                           corporationName = str(api_corp['name']),
+                           ticker          = api_corp['ticker'],
+                           ceoID           = api_corp['ceo']['id'],
+                           ceoName         = api_corp['ceo']['name'],
+                           stationID       = api_corp['hq']['id'],
+                           stationName     = api_corp['hq']['name'],
+                           description     = fix_description(api_corp['description']),
+                           taxRate         = api_corp['tax_percent'],
                            )
-        if api_corp.allianceID:
-            corp.alliance = get_alliance(api_corp.allianceID)
+        if api_corp['alliance']['id']:
+            corp.alliance = get_alliance(api_corp['alliance']['id'])
         corp.save()
         return corp
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def get_alliance(allianceID):
     """
      allianceID: int
     : Alliance object pulled from alliance list if needed
     """
     try:
-        alliance = Alliance.objects.get(allianceID = allianceID)
+        alliance = Alliance.objects.get(allianceID=allianceID)
     except Alliance.DoesNotExist:
-        api_conn = api.eveapi.EVEAPIConnection()
-        alliancesApi = api_conn.eve.AllianceList()
+        # api_conn = api.eveapi.EVEAPIConnection()
+        connection = api.evelink.api.API()
+        alliancesApi = api.evelink.eve.EVE(api=connection).alliances().result
         alliance = Alliance()
         alliance.allianceID = allianceID
-        for a in alliancesApi.alliances:
-            if a.allianceID == allianceID:
-                alliance.shortName = a.shortName
-                alliance.name = a.name
-                LOG.info("Adding new Alliance: "+ a.name)
+        for id, alliance in alliancesApi:
+            if alliance['id'] == allianceID:
+                alliance.shortName = alliance['ticker']
+                alliance.name = alliance['name']
+                LOG.info("Adding new Alliance: "+ alliance['name'])
                 alliance.save()
                 break
     return alliance
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def get_corp_or_alliance(entityID):
     """
      entityID:
@@ -89,7 +96,7 @@ def get_corp_or_alliance(entityID):
     try:
         return get_corp(entityID)
     except RuntimeError:
-        #This is because at time of coding the api is broken and the only
-        #way to catch this is by catching the eveapi runtime error
-        #TODO: fix when ccp get their shit together.
+        # This is because at time of coding the api is broken and the only
+        # way to catch this is by catching the eveapi runtime error
+        # TODO: fix when ccp get their shit together.
         return get_alliance(entityID)

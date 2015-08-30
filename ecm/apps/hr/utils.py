@@ -29,22 +29,24 @@ from ecm.apps.corp.utils import get_corp
 
 LOG = logging.getLogger(__name__)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def get_char(characterID):
-    api_conn = api.eveapi.EVEAPIConnection()
-    char = api_conn.eve.CharacterInfo(characterID = characterID)
+    # char = api_conn.eve.CharacterInfo(characterID=characterID)
+    api_conn = api.evelink.api.API()
+    char = api.evelink.eve.EVE(api=api_conn).character_info_from_id().result
     try:
-        corp = Corporation.objects.get(corporationID = char.corporationID)
+        corp = Corporation.objects.get(corporationID=char['corp']['id'])
     except Corporation.DoesNotExist:
-        corp = get_corp(char.corporationID)
-    LOG.info("Adding new Player: "+ char.characterName)
+        corp = get_corp(char['corp']['id'])
+    LOG.info("Adding new Player: " + char['name'])
     mem = Member()
-    mem.characterID = char.characterID
-    mem.name = char.characterName
-    mem.race = char.race
-    mem.bloodline = char.bloodline
+    mem.characterID = char['id']
+    mem.name = char['name']
+    mem.race = char['race']
+    mem.bloodline = char['bloodline']
     mem.corp = corp
-    mem.corpDate = char.corporationDate
-    mem.securityStatus = char.securityStatus
+    mem.corpDate = char['corp']['timestamp']
+    mem.securityStatus = char['sec_status']
     mem.save()
     return mem

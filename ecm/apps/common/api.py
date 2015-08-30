@@ -24,25 +24,45 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 
 if settings.EVEAPI_STUB_ENABLED:
-    from ecm.utils import eveapi_stub as eveapi  #@UnusedImport
-    from ecm.utils.eveapi_stub import Error, ServerError, AuthenticationError, RequestError #@UnusedImport
+    from ecm.utils import eveapi_stub as eveapi
 else:
-    import eveapi  #@UnusedImport @Reimport
-    from eveapi import Error, ServerError, AuthenticationError, RequestError #@UnusedImport @Reimport
+    import eveapi
 
 from ecm.apps.common.models import Setting, APICall
 from ecm.apps.corp.models import Corporation
+import evelink
 
 
+class Error(StandardError):
+    def __init__(self, code, message):
+        self.code = code
+        self.args = (message.rstrip("."),)
 
-#------------------------------------------------------------------------------
+    def __unicode__(self):
+        return u'%s [code=%s]' % (self.args[0], self.code)
+
+
+class RequestError(Error):
+    pass
+
+
+class AuthenticationError(Error):
+    pass
+
+
+class ServerError(Error):
+    pass
+
+
+# ------------------------------------------------------------------------------
 EVE_API_VERSION = '2'
 def check_version(version):
     if version != EVE_API_VERSION:
         raise DeprecationWarning("Wrong EVE API version. "
                 "Expected '%s', got '%s'." % (EVE_API_VERSION, version))
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def get_api():
     keyID = Setting.get(name='common_api_keyID')
     vCode = Setting.get(name='common_api_vCode')
@@ -51,7 +71,8 @@ def get_api():
     else:
         return keyID, vCode
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def get_charID():
     characterID = Setting.get(name='common_api_characterID')
     if not characterID:
@@ -59,30 +80,34 @@ def get_charID():
     else:
         return characterID
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def set_api(keyID, vCode, characterID):
     Setting.objects.filter(name='common_api_keyID').update(value=repr(keyID))
     Setting.objects.filter(name='common_api_vCode').update(value=repr(vCode))
     Setting.objects.filter(name='common_api_characterID').update(value=repr(characterID))
 
-#------------------------------------------------------------------------------
-def connect(proxy=None):
+
+# ------------------------------------------------------------------------------
+def connect(base_url=settings.BASE_API_URL):
     """
     Creates a connection to the web API with director credentials
     """
-    conn = eveapi.EVEAPIConnection(proxy=proxy)
     keyID, vCode = get_api()
-    return conn.auth(keyID=keyID, vCode=vCode)
+    conn = evelink.api.API(base_url, api_key=(keyID, vCode))
+    return conn
 
-#------------------------------------------------------------------------------
-def connect_user(user_api, proxy=None):
+
+# ------------------------------------------------------------------------------
+def connect_user(user_api, base_url=settings.BASE_API_URL):
     """
     Creates a connection to the web API with a user's credentials
     """
-    conn = eveapi.EVEAPIConnection(proxy=proxy)
-    return conn.auth(keyID=user_api.keyID, vCode=user_api.vCode)
+    connection = evelink.api.API(base_url, api_key=(user_api.keyID, user_api.vCode))
+    return connection
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def required_access_mask(character=True):
     accessMask = 0
     key_type = character and APICall.CHARACTER or APICall.CORPORATION
@@ -90,7 +115,8 @@ def required_access_mask(character=True):
         accessMask |= call.mask
     return accessMask
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def check_access_mask(accessMask, character):
     missing = []
     key_type = character and APICall.CHARACTER or APICall.CORPORATION
@@ -98,24 +124,30 @@ def check_access_mask(accessMask, character):
         if not accessMask & call.mask:
             missing.append(call)
     if missing:
-        raise eveapi.AuthenticationError(0, "This API Key misses mandatory accesses: "
-                                         + ', '.join([ call.name for call in missing ]))
+        raise AuthenticationError(0, "This API Key misses mandatory accesses: "
+                                  + ', '.join([ call.name for call in missing ]))
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 def validate_director_api_key(keyID, vCode):
     try:
-        connection = eveapi.EVEAPIConnection().auth(keyID=keyID, vCode=vCode)
-        response = connection.account.APIKeyInfo()
-        if response.key.type.lower() != "corporation":
-            raise ValidationError("Wrong API Key type '%s'. Please provide a Corporation API Key." % response.key.type)
-        check_access_mask(response.key.accessMask, character=False)
-    except eveapi.AuthenticationError, e:
+        connection = evelink.api.API(api_key=(keyID, vCode))
+        # connection = eveapi.EVEAPIConnection().auth(keyID=keyID, vCode=vCode)
+        # response = connection.account.APIKeyInfo()
+        response = evelink.account.Account(api=connection).key_info()
+        if response.result['type'].lower() != 'corp':
+            raise ValidationError(
+                "Wrong API Key type '%s'. Please provide a Corporation API Key." % response.result['type']
+            )
+        check_access_mask(response.result['access_mask'], character=False)
+    except AuthenticationError, e:
         raise ValidationError(str(e))
 
-    keyCharIDs = [ char.characterID for char in response.key.characters ]
+    keyCharIDs = [ char['id'] for char in response.result['characters'] ]
     return keyCharIDs[0]
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 class Character:
     name = ""
     characterID = 0
@@ -125,22 +157,22 @@ class Character:
 
 def get_account_characters(user_api):
     connection = connect_user(user_api)
-    response = connection.account.APIKeyInfo()
+    response = evelink.account.Account(api=connection).key_info()
     corp = Corporation.objects.mine()
     characters = []
-    if response.key.type.lower() != "account":
-        raise eveapi.AuthenticationError(0, "Wrong API Key type '" + response.key.type + "'. " +
+    if response.result['type'].lower() != "account":
+        raise AuthenticationError(0, "Wrong API Key type '" + response.result['type'] + "'. " +
                                          "Please provide an API Key working for all characters of your account.")
 
     check_access_mask(response.key.accessMask, character=True)
 
-    for char in response.key.characters:
+    for id, char in response.result['characters'].iteritems():
         c = Character()
-        c.name = char.characterName
-        c.characterID = char.characterID
-        c.corporationID = char.corporationID
-        c.corporationName = char.corporationName
-        c.is_corped = (char.corporationID == corp.corporationID)
+        c.name = char['name']
+        c.characterID = char['id']
+        c.corporationID = char['corp']['id']
+        c.corporationName = char['corp']['name']
+        c.is_corped = (char['corp']['id'] == corp.corporationID)
         characters.append(c)
     return characters
 
