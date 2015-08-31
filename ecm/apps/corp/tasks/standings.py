@@ -26,6 +26,7 @@ from ecm.apps.common.models import UpdateDate
 from ecm.apps.common import api
 
 import logging
+from datetime import datetime
 LOG = logging.getLogger(__name__)
 
 
@@ -40,7 +41,8 @@ def update():
     api_conn = api.connect()
     corpApi = api_conn.corp.ContactList(characterID=api.get_charID())
     api.check_version(corpApi._meta.version)
-    currentTime = timezone.make_aware(corpApi._meta.currentTime, timezone.utc)
+    # currentTime = timezone.make_aware(corpApi._meta.currentTime, timezone.utc)
+    currentTime = datetime.utcnow()
     
     my_corp = Corporation.objects.mine()
     
