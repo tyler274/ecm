@@ -41,8 +41,7 @@ def update():
     api_conn = api.connect()
     corpApi = api_conn.corp.ContactList(characterID=api.get_charID())
     api.check_version(corpApi._meta.version)
-    # currentTime = timezone.make_aware(corpApi._meta.currentTime, timezone.utc)
-    currentTime = datetime.utcnow()
+    currentTime = timezone.make_aware(corpApi._meta.currentTime, timezone.utc)
     
     my_corp = Corporation.objects.mine()
     

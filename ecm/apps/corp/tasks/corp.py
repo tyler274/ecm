@@ -48,8 +48,7 @@ def update():
     corpApi = api_conn.corp.CorporationSheet(characterID=api.get_charID())
     api.check_version(corpApi._meta.version)
 
-    # currentTime = timezone.make_aware(corpApi._meta.currentTime, timezone.utc)
-    currentTime = datetime.utcnow()
+    currentTime = timezone.make_aware(corpApi._meta.currentTime, timezone.utc)
 
     LOG.debug("parsing api response...")
     corp = update_corp_info(corpApi, currentTime)

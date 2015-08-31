@@ -27,8 +27,8 @@ if settings.EVEAPI_STUB_ENABLED:
     from ecm.utils import eveapi_stub as eveapi  #@UnusedImport
     from ecm.utils.eveapi_stub import Error, ServerError, AuthenticationError, RequestError #@UnusedImport
 else:
-    import eveapi  #@UnusedImport @Reimport
-    from eveapi import Error, ServerError, AuthenticationError, RequestError #@UnusedImport @Reimport
+    from ecm.lib import eveapi  #@UnusedImport @Reimport
+    from ecm.lib.eveapi import Error, ServerError, AuthenticationError, RequestError #@UnusedImport @Reimport
 
 from ecm.apps.common.models import Setting, APICall
 from ecm.apps.corp.models import Corporation
