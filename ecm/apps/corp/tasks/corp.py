@@ -21,6 +21,7 @@ __author__ = "diabeteman"
 
 import re
 import logging
+from datetime import datetime
 
 from django.utils import timezone
 from django.conf import settings
@@ -44,10 +45,12 @@ def update():
     # connect to eve API
     api_conn = api.connect()
     # retrieve /corp/CorporationSheet.xml.aspx
-    corpApi = api_conn.corp.CorporationSheet(characterID=api.get_charID())
-    api.check_version(corpApi._meta.version)
+    # corpApi = api_conn.corp.CorporationSheet(characterID=api.get_charID())
+    corpApi = api.evelink.corp.Corp(api=api_conn).corporation_sheet().result
+    # api.check_version(corpApi._meta.version)
 
-    currentTime = timezone.make_aware(corpApi._meta.currentTime, timezone.utc)
+    # currentTime = timezone.make_aware(corpApi._meta.currentTime, timezone.utc)
+    currentTime = timezone.make_aware(datetime.utcnow(), timezone.utc)
 
     LOG.debug("parsing api response...")
     corp = update_corp_info(corpApi, currentTime)
@@ -57,7 +60,7 @@ def update():
         LOG.debug("alliance: %s <%s>", corp.alliance.name, corp.alliance.shortName)
     else:
         LOG.debug("alliance: None")
-    LOG.debug("CEO: %s", corpApi.ceoName)
+    LOG.debug("CEO: %s", corp.ceoName)
     LOG.debug("tax rate: %d%%", corp.taxRate)
     LOG.debug("member limit: %d", corp.memberLimit)
 
@@ -72,16 +75,16 @@ def update_corp_info(corpApi, currentTime):
     try:
         try:
             try:
-                alliance = Alliance.objects.get(allianceID=corpApi.allianceID)
+                alliance = Alliance.objects.get(allianceID=corpApi.get('alliance').get('id'))
             except Alliance.DoesNotExist:
-                LOG.info("Adding new Alliance: "+ corpApi.allianceName)
+                LOG.info("Adding new Alliance: "+ corpApi.get('alliance').get('name'))
                 alliance = Alliance()
-                alliance.allianceID = corpApi.allianceID
-                alliance.name = corpApi.allianceName
-                alliancesApi = api.connect().eve.AllianceList()
-                for a in alliancesApi.alliances:
-                    if a.allianceID == corpApi.allianceID:
-                        alliance.shortName = a.shortName
+                alliance.allianceID = corpApi.get('alliance').get('id')
+                alliance.name = corpApi.get('alliance').get('name')
+                alliancesApi = api.evelink.EVE(api=api.connect()).alliances().result
+                for key, a in alliancesApi.iteritems():
+                    if a.get() == corpApi.get('alliance').get('id'):
+                        alliance.shortName = a.get('ticker')
                         alliance.save()
                         break
         except api.Error:
@@ -91,41 +94,41 @@ def update_corp_info(corpApi, currentTime):
     except:
         alliance = None
 
-    description = fix_description(corpApi.description)
+    description = fix_description(corpApi.get('description'))
 
     # reset all other corps
-    Corporation.objects.exclude(corporationID=corpApi.corporationID).update(is_my_corp=False)
+    Corporation.objects.exclude(corporationID=corpApi.get('id')).update(is_my_corp=False)
 
     try:
         # try to retrieve the db stored corp info
-        corp = Corporation.objects.get(corporationID=corpApi.corporationID)
+        corp = Corporation.objects.get(corporationID=corpApi.get('id'))
         corp.is_my_corp      = True
-        corp.corporationID   = corpApi.corporationID
-        corp.corporationName = corpApi.corporationName
-        corp.ticker          = corpApi.ticker
-        corp.ceoID           = corpApi.ceoID
-        corp.ceoName         = corpApi.ceoName
-        corp.stationID       = corpApi.stationID
-        corp.stationName     = corpApi.stationName
+        corp.corporationID   = corpApi.get('id')
+        corp.corporationName = corpApi.get('name')
+        corp.ticker          = corpApi.get('ticker')
+        corp.ceoID           = corpApi.get('ceo').get('id')
+        corp.ceoName         = corpApi.get('ceo').get('name')
+        corp.stationID       = corpApi.get('hq').get('id')
+        corp.stationName     = corpApi.get('hq').get('name')
         corp.alliance        = alliance
         corp.description     = description
-        corp.taxRate         = corpApi.taxRate
-        corp.memberLimit     = corpApi.memberLimit
+        corp.taxRate         = corpApi.get('tax_percent')
+        corp.memberLimit     = corpApi.get('members').get('limit')
     except Corporation.DoesNotExist:
         LOG.debug('First scan, creating corp...')
         # no corp parsed yet
         corp = Corporation(is_my_corp      = True,
-                           corporationID   = corpApi.corporationID,
-                           corporationName = corpApi.corporationName,
-                           ticker          = corpApi.ticker,
-                           ceoID           = corpApi.ceoID,
-                           ceoName         = corpApi.ceoName,
-                           stationID       = corpApi.stationID,
-                           stationName     = corpApi.stationName,
+                           corporationID   = corpApi.get('id'),
+                           corporationName = corpApi.get('name'),
+                           ticker          = corpApi.get('ticker'),
+                           ceoID           = corpApi.get('ceo').get('id'),
+                           ceoName         = corpApi.get('ceo').get('name'),
+                           stationID       = corpApi.get('hq').get('id'),
+                           stationName     = corpApi.get('hq').get('name'),
                            description     = description,
                            alliance        = alliance,
-                           taxRate         = corpApi.taxRate,
-                           memberLimit     = corpApi.memberLimit
+                           taxRate         = corpApi.get('tax_percent'),
+                           memberLimit     = corpApi.get('members').get('limit')
                            )
     
     if settings.USE_HTTPS:
@@ -139,7 +142,7 @@ def update_corp_info(corpApi, currentTime):
         corp.private_key = cryptoECM.generate_rsa_keypair()
         corp.public_key = cryptoECM.extract_public_key(corp.private_key)
         corp.key_fingerprint = cryptoECM.key_fingerprint(corp.public_key)
-        LOG.info('Generated RSA key pair for corporation ID %d.' % corpApi.corporationID)
+        LOG.info('Generated RSA key pair for corporation ID %d.' % corpApi.get('id'))
 
     corp.save()
     # we store the update time of the table
@@ -154,9 +157,9 @@ def update_hangar_divisions(corpApi, currentTime):
     LOG.debug("HANGAR DIVISIONS:")
     my_corp = Corporation.objects.mine()
     corp_hangars = CorpHangar.objects.filter(corp=my_corp)
-    for hangarDiv in corpApi.divisions:
-        corp_hangar_id = hangarDiv.accountKey
-        corp_hangar_name = hangarDiv.description
+    for key, hangarDiv in corpApi.get('hangars').iteritems():
+        corp_hangar_id = key
+        corp_hangar_name = hangarDiv
         try:
             h = corp_hangars.get(hangar_id=corp_hangar_id)
             h.name = corp_hangar_name
@@ -180,9 +183,9 @@ def update_wallet_divisions(corpApi, currentTime):
     LOG.debug("WALLET DIVISIONS:")
     my_corp = Corporation.objects.mine()
     wallets = CorpWallet.objects.filter(corp=my_corp)
-    for walletDiv in corpApi.walletDivisions:
-        corp_wallet_id = walletDiv.accountKey
-        corp_wallet_name = walletDiv.description
+    for key, walletDiv in corpApi.get('wallets').iteritems():
+        corp_wallet_id = key
+        corp_wallet_name = walletDiv
         try:
             w = wallets.get(wallet_id=corp_wallet_id)
             w.name = corp_wallet_name
