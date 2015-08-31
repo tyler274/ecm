@@ -84,7 +84,8 @@ def write_journal_results(wallet, entries):
 
         JournalEntry.objects.create(refID=e.refID,
                                     wallet=wallet,
-                                    date=e.date.replace(tzinfo=pytz.UTC),
+                                    # date=e.date.replace(tzinfo=pytz.UTC),
+                                    date=e.date,
                                     type_id=e.refTypeID,
                                     ownerName1=e.ownerName1,
                                     ownerID1=e.ownerID1,
